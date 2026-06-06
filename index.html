@@ -590,17 +590,31 @@ const PROXIES = [
   u => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}`,
 ];
 
-async function proxyFetch(url, timeout = 15000) {
-  for (const mk of PROXIES) {
-    try {
+// Try ALL proxies in parallel — first to succeed wins
+async function proxyFetch(url, timeout = 10000) {
+  const results = await Promise.allSettled(
+    PROXIES.map(mk => new Promise(async (res, rej) => {
       const ctrl = new AbortController();
       const tid  = setTimeout(() => ctrl.abort(), timeout);
-      const res  = await fetch(mk(url), { signal: ctrl.signal });
-      clearTimeout(tid);
-      if (res.ok) return await res.text();
-    } catch {}
-  }
-  throw new Error('Proxy bağlantısı başarısız');
+      try {
+        const r = await fetch(mk(url), { signal: ctrl.signal });
+        clearTimeout(tid);
+        if (r.ok) res(await r.text());
+        else rej(new Error(`HTTP ${r.status}`));
+      } catch(e) { clearTimeout(tid); rej(e); }
+    }))
+  );
+  const ok = results.find(r => r.status === 'fulfilled' && r.value?.length > 20);
+  if (ok) return ok.value;
+  throw new Error('Tüm proxy\'ler başarısız');
+}
+
+// Per-video overall timeout wrapper
+async function fetchTranscriptWithTimeout(videoId, totalMs = 25000) {
+  return Promise.race([
+    fetchTranscript(videoId),
+    new Promise((_, rej) => setTimeout(() => rej(new Error('Transkript zaman aşımı (25s) — altyazı olmayabilir')), totalMs)),
+  ]);
 }
 
 async function fetchTranscript(videoId) {
@@ -673,10 +687,10 @@ function parseTranscriptXml(xml) {
 // Strategy 2 — Watch page scraping
 async function tryWatchPage(videoId) {
   try {
-    const html = await proxyFetch(`https://www.youtube.com/watch?v=${videoId}`, 18000);
+    addLog('  → Strateji 2: YouTube sayfa içeriği inceleniyor...');
+    const html = await proxyFetch(`https://www.youtube.com/watch?v=${videoId}`, 12000);
     if (!html || html.length < 1000) return null;
 
-    // Multiple patterns for captionTracks
     const patterns = [
       /"captionTracks":(\[.*?\])/,
       /"captionTracks":\s*(\[[\s\S]{5,4000}?\]),\s*"audioTracks"/,
@@ -700,36 +714,39 @@ async function tryWatchPage(videoId) {
 
     if (!track?.baseUrl) return null;
 
-    const xml = await proxyFetch(decodeURIComponent(track.baseUrl), 12000);
-    return parseTranscriptXml(xml);
+    const xml = await proxyFetch(decodeURIComponent(track.baseUrl), 10000);
+    const result = parseTranscriptXml(xml);
+    if (result) addLog('  → Strateji 2 (watch page) başarılı', 'ok');
+    return result;
   } catch { return null; }
 }
 
 // Strategy 3 — Invidious public API
 async function tryInvidious(videoId) {
+  addLog('  → Strateji 3: Invidious API deneniyor...');
   const instances = [
     'https://iv.datura.network',
     'https://invidious.privacyredirect.com',
     'https://yt.artemislena.eu',
-    'https://invidious.nerdvpn.de',
   ];
-  for (const base of instances) {
-    try {
-      const capRaw = await proxyFetch(`${base}/api/v1/captions/${videoId}`, 10000);
-      const { captions } = JSON.parse(capRaw);
-      if (!captions?.length) continue;
-
-      const track = captions.find(c => c.language_code === 'tr')
-                 || captions.find(c => c.language_code?.startsWith('tr'))
-                 || captions.find(c => c.language_code === 'en')
-                 || captions[0];
-      if (!track?.url) continue;
-
-      const content = await proxyFetch(`${base}${track.url}`, 10000);
-      const parsed  = parseTranscriptRaw(content, content.includes('WEBVTT') ? 'vtt' : 'srv1');
-      if (parsed && parsed.length > 30) return parsed;
-    } catch {}
-  }
+  // Try instances in parallel
+  const attempts = instances.map(async base => {
+    const capRaw = await proxyFetch(`${base}/api/v1/captions/${videoId}`, 8000);
+    const { captions } = JSON.parse(capRaw);
+    if (!captions?.length) throw new Error('no captions');
+    const track = captions.find(c => c.language_code === 'tr')
+               || captions.find(c => c.language_code?.startsWith('tr'))
+               || captions.find(c => c.language_code === 'en')
+               || captions[0];
+    if (!track?.url) throw new Error('no url');
+    const content = await proxyFetch(`${base}${track.url}`, 8000);
+    const parsed  = parseTranscriptRaw(content, content.includes('WEBVTT') ? 'vtt' : 'srv1');
+    if (!parsed || parsed.length < 30) throw new Error('too short');
+    return parsed;
+  });
+  const results = await Promise.allSettled(attempts);
+  const ok = results.find(r => r.status === 'fulfilled');
+  if (ok) { addLog('  → Strateji 3 (Invidious) başarılı', 'ok'); return ok.value; }
   return null;
 }
 
