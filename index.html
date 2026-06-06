@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Süper Zırhlı PDF Üreticisi | Otomatik Sınav Hazırlık</title>
+<meta name="description" content="MEB senaryosuna özel, yapay zeka destekli sınav hazırlık PDF'i otomatik oluşturucu.">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#1a1a2e;--navy2:#16213e;--navy3:#0f3460;
+  --red:#e94560;--red-pale:#fff3f3;
+  --green:#1a6b3c;--green-light:#00b894;--green-pale:#f0fff6;
+  --gold:#f0a500;--blue-pale:#f0f8ff;
+  --stripe:#e8edf8;
+  --bg:#0d1117;--bg2:#161b22;--bg3:#21262d;
+  --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.15);
+  --text:#e6edf3;--text2:#8b949e;--text3:#484f58;
+  --success:#3fb950;--warn:#d29922;
+  --r:12px;--r2:20px;
+  --shadow:0 4px 16px rgba(0,0,0,0.5);
+  --tr:all 0.2s cubic-bezier(.4,0,.2,1);
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Inter',system-ui,sans-serif;
+  background:var(--bg);color:var(--text);
+  min-height:100vh;overflow-x:hidden;line-height:1.6;
+}
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse at 15% 10%,rgba(26,26,46,.9) 0%,transparent 55%),
+    radial-gradient(ellipse at 85% 85%,rgba(233,69,96,.07) 0%,transparent 55%),
+    radial-gradient(ellipse at 50% 50%,rgba(15,52,96,.25) 0%,transparent 65%);
+}
+
+/* ── HEADER ── */
+.hdr{position:relative;z-index:10;padding:2rem 1rem 1.25rem;text-align:center;border-bottom:1px solid var(--border)}
+.badge{
+  display:inline-flex;align-items:center;gap:.5rem;
+  background:rgba(233,69,96,.1);border:1px solid rgba(233,69,96,.3);
+  border-radius:100px;padding:.35rem .9rem;
+  font-size:.72rem;font-weight:700;color:var(--red);
+  text-transform:uppercase;letter-spacing:.08em;margin-bottom:.9rem;
+}
+.app-title{
+  font-size:clamp(1.75rem,5vw,2.6rem);font-weight:900;line-height:1.2;margin-bottom:.45rem;
+  background:linear-gradient(135deg,#fff 0%,#e94560 55%,#f0a500 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.app-sub{color:var(--text2);font-size:.92rem;max-width:480px;margin:0 auto}
+
+/* ── WIZARD CONTAINER ── */
+.wiz{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:2rem 1rem 5rem}
+
+/* ── STEP INDICATOR ── */
+.steps{display:flex;align-items:center;justify-content:center;margin-bottom:2.5rem}
+.si{display:flex;flex-direction:column;align-items:center;position:relative}
+.sc{
+  width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:.85rem;border:2px solid var(--border);
+  background:var(--bg2);color:var(--text3);transition:var(--tr);position:relative;z-index:1;
+}
+.sc.active{border-color:var(--red);background:var(--red);color:#fff;box-shadow:0 0 0 4px rgba(233,69,96,.25)}
+.sc.done{border-color:var(--success);background:var(--success);color:#fff}
+.sc.done .sn{display:none}
+.sc.done::after{content:'✓'}
+.sl{font-size:.68rem;margin-top:.4rem;color:var(--text3);font-weight:600;white-space:nowrap}
+.sl.active{color:var(--red)}.sl.done{color:var(--success)}
+.sconn{flex:1;height:2px;background:var(--border);margin:0 .3rem .75rem;max-width:90px;transition:var(--tr)}
+.sconn.done{background:var(--success)}
+@media(max-width:500px){.sl{display:none}.sconn{max-width:40px}}
+
+/* ── PANEL ── */
+.panel{display:none;animation:fi .3s ease}
+.panel.active{display:block}
+@keyframes fi{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── CARD ── */
+.card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--r2);padding:1.75rem;margin-bottom:1.25rem;
+  transition:var(--tr);
+}
+.card:hover{border-color:var(--border2)}
+.ch{display:flex;align-items:center;gap:.75rem;margin-bottom:1.25rem}
+.ci{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.ci.r{background:rgba(233,69,96,.15)}.ci.b{background:rgba(59,130,246,.15)}
+.ci.g{background:rgba(26,107,60,.15)}.ci.gold{background:rgba(240,165,0,.15)}
+.ct{font-size:1rem;font-weight:700}
+.cd{font-size:.78rem;color:var(--text2);margin-top:.1rem}
+
+/* ── FORM ── */
+label.lbl{display:block;font-size:.78rem;font-weight:700;color:var(--text2);margin-bottom:.4rem;text-transform:uppercase;letter-spacing:.05em}
+input,select,textarea{
+  width:100%;padding:.7rem .9rem;background:var(--bg3);border:1px solid var(--border);
+  border-radius:var(--r);color:var(--text);font-family:inherit;font-size:.9rem;
+  transition:var(--tr);outline:none;
+}
+input:focus,select:focus,textarea:focus{border-color:rgba(233,69,96,.5);box-shadow:0 0 0 3px rgba(233,69,96,.1)}
+textarea{resize:vertical;min-height:100px}
+select option{background:var(--bg2)}
+.fg{margin-bottom:1rem}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:580px){.frow{grid-template-columns:1fr}}
+
+/* ── BUTTONS ── */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:.5rem;
+  padding:.7rem 1.4rem;border-radius:var(--r);font-family:inherit;font-size:.9rem;
+  font-weight:700;cursor:pointer;border:none;transition:var(--tr);text-decoration:none;
+}
+.btn-p{background:linear-gradient(135deg,#e94560,#c73652);color:#fff;box-shadow:0 4px 12px rgba(233,69,96,.3)}
+.btn-p:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(233,69,96,.4)}
+.btn-s{background:linear-gradient(135deg,#1a6b3c,#0d4a28);color:#fff;box-shadow:0 4px 12px rgba(26,107,60,.3)}
+.btn-s:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(26,107,60,.4)}
+.btn-g{background:transparent;color:var(--text2);border:1px solid var(--border)}
+.btn-g:hover{color:var(--text);border-color:var(--border2)}
+.btn-sec{background:var(--bg3);color:var(--text2);border:1px solid var(--border)}
+.btn-sec:hover{border-color:var(--border2);color:var(--text)}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none!important}
+.btn-lg{padding:.9rem 2rem;font-size:1rem;border-radius:var(--r2)}
+.btn-sm{padding:.4rem .8rem;font-size:.78rem}
+.bgrp{display:flex;gap:.75rem;justify-content:flex-end;margin-top:1.5rem;flex-wrap:wrap}
+
+/* ── URL LIST ── */
+.url-list{display:flex;flex-direction:column;gap:.5rem}
+.url-item{display:flex;gap:.5rem}
+.url-item input{flex:1}
+.url-rm{
+  width:36px;height:36px;border-radius:8px;border:1px solid var(--border);
+  background:var(--bg3);color:var(--text3);cursor:pointer;font-size:.9rem;
+  display:flex;align-items:center;justify-content:center;transition:var(--tr);flex-shrink:0;
+}
+.url-rm:hover{border-color:var(--red);color:var(--red);background:rgba(233,69,96,.1)}
+
+/* ── FILE DROP ── */
+.fdrop{
+  border:2px dashed var(--border);border-radius:var(--r2);padding:2rem;
+  text-align:center;cursor:pointer;transition:var(--tr);position:relative;overflow:hidden;
+}
+.fdrop:hover,.fdrop.on{border-color:rgba(233,69,96,.5);background:rgba(233,69,96,.03)}
+.fdrop input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.fdi{font-size:2.5rem;margin-bottom:.5rem}
+.fdt{font-size:.88rem;color:var(--text2)}
+.fdh{font-size:.73rem;color:var(--text3);margin-top:.2rem}
+.fprev{margin-top:.75rem;border-radius:var(--r);overflow:hidden;border:1px solid var(--border)}
+.fprev img{width:100%;max-height:180px;object-fit:cover;display:block}
+
+/* ── OCR STATUS ── */
+.ocrs{display:flex;align-items:center;gap:.75rem;padding:.7rem 1rem;border-radius:var(--r);font-size:.83rem;margin-top:.75rem}
+.ocrs.proc{background:rgba(240,165,0,.1);border:1px solid rgba(240,165,0,.3);color:var(--gold)}
+.ocrs.ok{background:rgba(63,185,80,.1);border:1px solid rgba(63,185,80,.3);color:var(--success)}
+.ocrs.err{background:rgba(233,69,96,.1);border:1px solid rgba(233,69,96,.3);color:var(--red)}
+
+/* ── SPINNER ── */
+.spin{width:18px;height:18px;border:2px solid rgba(255,255,255,.2);border-top-color:currentColor;border-radius:50%;animation:rot .8s linear infinite;flex-shrink:0}
+@keyframes rot{to{transform:rotate(360deg)}}
+
+/* ── PROVIDER TOGGLE ── */
+.ptog{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+.popt{
+  border:2px solid var(--border);border-radius:var(--r);padding:1rem;
+  cursor:pointer;transition:var(--tr);position:relative;
+}
+.popt:hover{border-color:var(--border2)}
+.popt.sel{border-color:var(--red);background:rgba(233,69,96,.05)}
+.popt input{position:absolute;opacity:0;width:0;height:0}
+.pname{font-weight:800;font-size:1rem;margin-bottom:.25rem}
+.pdesc{font-size:.73rem;color:var(--text2)}
+.pbadge{display:inline-block;padding:.1rem .45rem;border-radius:4px;font-size:.63rem;font-weight:800;text-transform:uppercase;margin-top:.35rem}
+.pbadge.cur{background:rgba(233,69,96,.2);color:var(--red)}
+.pbadge.alt{background:rgba(26,107,60,.2);color:var(--green-light)}
+
+/* ── SCENARIO TABLE ── */
+.stbl{width:100%;border-collapse:collapse;font-size:.83rem;margin-top:.6rem}
+.stbl th{background:var(--bg3);padding:.55rem .75rem;text-align:left;font-weight:700;color:var(--text2);font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--border)}
+.stbl td{padding:.45rem .75rem;border-bottom:1px solid var(--border)}
+.stbl tr:last-child td{border-bottom:none}
+.stbl tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+.stbl td input{padding:.3rem .5rem;font-size:.8rem}
+.stbl td input[type=number]{width:62px;text-align:center}
+.row-rm{width:26px;height:26px;border:1px solid var(--border);border-radius:6px;background:var(--bg3);color:var(--text3);cursor:pointer;font-size:.8rem;display:inline-flex;align-items:center;justify-content:center;transition:var(--tr)}
+.row-rm:hover{border-color:var(--red);color:var(--red);background:rgba(233,69,96,.1)}
+.add-row{width:100%;padding:.55rem;border:1px dashed var(--border);border-radius:var(--r);background:transparent;color:var(--text3);cursor:pointer;font-size:.83rem;margin-top:.5rem;transition:var(--tr);font-family:inherit}
+.add-row:hover{border-color:var(--success);color:var(--success)}
+
+/* ── PROGRESS ── */
+.pbar{width:100%;height:6px;background:var(--bg3);border-radius:3px;overflow:hidden;margin:.75rem 0}
+.pfill{height:100%;background:linear-gradient(90deg,var(--red),var(--gold));border-radius:3px;transition:width .4s ease;width:0%}
+
+/* ── GENERATE CARD ── */
+.gencard{text-align:center;padding:2.5rem 1.5rem}
+.geni{font-size:3.5rem;margin-bottom:.75rem}
+.gent{font-size:1.35rem;font-weight:800;margin-bottom:.4rem}
+.gend{color:var(--text2);font-size:.88rem;margin-bottom:1.75rem}
+
+/* ── STATUS LOG ── */
+.slog{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:.9rem;font-size:.78rem;font-family:'Courier New',monospace;color:var(--text2);text-align:left;max-height:180px;overflow-y:auto;margin-top:.9rem}
+.ll{display:flex;gap:.5rem;padding:.12rem 0}
+.lt{color:var(--text3)}.lok{color:var(--success)}.linf{color:var(--gold)}.lerr{color:var(--red)}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:2rem;right:2rem;padding:.9rem 1.4rem;border-radius:var(--r);font-size:.88rem;font-weight:700;z-index:9999;animation:tin .3s ease;max-width:300px;box-shadow:var(--shadow)}
+@keyframes tin{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+.toast.ok{background:#1a6b3c;color:#fff}.toast.err{background:#e94560;color:#fff}.toast.inf{background:var(--navy3);color:#fff}
+
+/* ── INFO BOX ── */
+.ib{padding:.7rem .9rem;border-radius:var(--r);font-size:.8rem;display:flex;align-items:flex-start;gap:.55rem;line-height:1.5}
+.ib.tip{background:rgba(15,52,96,.3);border:1px solid rgba(59,130,246,.2);color:#7ab3ef}
+.ib.warn{background:rgba(240,165,0,.1);border:1px solid rgba(240,165,0,.3);color:var(--gold)}
+.ib-i{font-size:.95rem;flex-shrink:0;margin-top:.05rem}
+
+/* ── SUMMARY CHIPS ── */
+.chips{display:flex;flex-wrap:wrap;gap:.45rem;margin-bottom:1.25rem}
+.chip{display:flex;align-items:center;gap:.35rem;padding:.3rem .7rem;border-radius:100px;font-size:.75rem;font-weight:600;background:var(--bg3);border:1px solid var(--border);color:var(--text2)}
+.chip.ok{background:rgba(63,185,80,.08);border-color:rgba(63,185,80,.3);color:var(--success)}
+
+/* ── API KEY ── */
+.akw{position:relative}
+.akw input{padding-right:3rem}
+.akt{position:absolute;right:.7rem;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text3);cursor:pointer;font-size:1rem;padding:.2rem}
+.akt:hover{color:var(--text)}
+.hint{font-size:.72rem;color:var(--text3);margin-top:.3rem}
+
+/* ── TOTAL DISPLAY ── */
+.total-box{padding:.7rem;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);font-weight:800;color:var(--red);font-size:1.1rem;text-align:center}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--border2)}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="hdr">
+  <div class="badge">🛡️ Süper Zırhlı Sistem</div>
+  <h1 class="app-title">Otomatik Sınav PDF Üreticisi</h1>
+  <p class="app-sub">MEB senaryosuna özel · Yapay Zeka destekli · Tek tıkla Süper Zırhlı not</p>
+</header>
+
+<main class="wiz">
+
+  <!-- STEP INDICATOR -->
+  <nav class="steps" id="stepNav">
+    <div class="si"><div class="sc active" id="sc1"><span class="sn">1</span></div><div class="sl active" id="sl1">API & Ders</div></div>
+    <div class="sconn" id="cn1"></div>
+    <div class="si"><div class="sc" id="sc2"><span class="sn">2</span></div><div class="sl" id="sl2">Kaynaklar</div></div>
+    <div class="sconn" id="cn2"></div>
+    <div class="si"><div class="sc" id="sc3"><span class="sn">3</span></div><div class="sl" id="sl3">Senaryo</div></div>
+    <div class="sconn" id="cn3"></div>
+    <div class="si"><div class="sc" id="sc4"><span class="sn">4</span></div><div class="sl" id="sl4">PDF Üret</div></div>
+  </nav>
+
+  <!-- ═══ STEP 1: API & DERS ═══ -->
+  <div class="panel active" id="p1">
+
+    <div class="card">
+      <div class="ch"><div class="ci r">🤖</div><div><div class="ct">Yapay Zeka Sağlayıcı</div><div class="cd">Hangi AI motoru kullanılsın?</div></div></div>
+      <div class="fg">
+        <label class="lbl">Sağlayıcı</label>
+        <div class="ptog">
+          <label class="popt sel" id="pClaude" onclick="setProv('claude')">
+            <input type="radio" name="prov" value="claude" checked>
+            <div class="pname">🔮 Claude</div>
+            <div class="pdesc">Anthropic — Derin analiz, güçlü Türkçe</div>
+            <div class="pbadge cur">Varsayılan</div>
+          </label>
+          <label class="popt" id="pGemini" onclick="setProv('gemini')">
+            <input type="radio" name="prov" value="gemini">
+            <div class="pname">✨ Gemini</div>
+            <div class="pdesc">Google — Hızlı, ücretsiz kota ile</div>
+            <div class="pbadge alt">Alternatif</div>
+          </label>
+        </div>
+      </div>
+      <div class="fg">
+        <label class="lbl" id="keyLbl">Claude API Key</label>
+        <div class="akw">
+          <input type="password" id="apiKey" placeholder="sk-ant-api03-..." autocomplete="off">
+          <button class="akt" onclick="toggleKey()" type="button" title="Göster/Gizle">👁</button>
+        </div>
+        <p class="hint">🔒 Yalnızca bu tarayıcıda saklanır — sunucuya gönderilmez.</p>
+      </div>
+      <div class="ib tip">
+        <span class="ib-i">💡</span>
+        <span>API key'i bir kez girin, tarayıcıya kaydedilir. Sağlayıcı değiştirmek için sadece radio butonunu tıklayın, başka değişiklik gerekmez.</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><div class="ci gold">📚</div><div><div class="ct">Ders & Sınıf Bilgisi</div><div class="cd">PDF kapağı ve içerik için temel bilgiler</div></div></div>
+      <div class="frow">
+        <div class="fg">
+          <label class="lbl">Ders</label>
+          <select id="ders">
+            <option value="Fizik">⚛️ Fizik</option>
+            <option value="Matematik">📐 Matematik</option>
+            <option value="Biyoloji">🧬 Biyoloji</option>
+            <option value="Kimya">⚗️ Kimya</option>
+            <option value="Coğrafya">🌍 Coğrafya</option>
+            <option value="Tarih">📜 Tarih</option>
+            <option value="Türk Dili ve Edebiyatı">📖 Türk Dili ve Edebiyatı</option>
+            <option value="İngilizce">🌐 İngilizce</option>
+            <option value="Felsefe">🤔 Felsefe</option>
+            <option value="Din Kültürü">🕌 Din Kültürü</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label class="lbl">Sınıf</label>
+          <select id="sinif">
+            <option value="9">9. Sınıf</option>
+            <option value="10">10. Sınıf</option>
+            <option value="11">11. Sınıf</option>
+            <option value="12">12. Sınıf</option>
+          </select>
+        </div>
+      </div>
+      <div class="frow">
+        <div class="fg">
+          <label class="lbl">Dönem</label>
+          <select id="donem">
+            <option value="1">1. Dönem</option>
+            <option value="2">2. Dönem</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label class="lbl">Yazılı No</label>
+          <select id="yazili">
+            <option value="1">1. Yazılı</option>
+            <option value="2">2. Yazılı</option>
+            <option value="3">3. Yazılı</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="bgrp">
+      <button class="btn btn-p btn-lg" onclick="go(2)">Devam Et →</button>
+    </div>
+  </div>
+
+  <!-- ═══ STEP 2: SOURCES ═══ -->
+  <div class="panel" id="p2">
+
+    <div class="card">
+      <div class="ch"><div class="ci b">📝</div><div><div class="ct">NotebookLM Transkripti</div><div class="cd">Video içeriğini NotebookLM'den alıp yapıştırın</div></div></div>
+      <div class="ib tip" style="margin-bottom:.9rem">
+        <span class="ib-i">📌</span>
+        <span>NotebookLM'e YouTube URL'lerini yükleyin → sohbet kutusunda "Bu videoları özetle, formülleri ve kritik kavramları çıkar" deyin → kopyala → buraya yapıştırın.</span>
+      </div>
+      <div class="fg">
+        <label class="lbl">Transkript / Ders Notları</label>
+        <textarea id="transcript" rows="9" placeholder="NotebookLM'den aldığınız konu özeti, formüller, önemli noktalar...&#10;&#10;Bu alan ne kadar doluysa PDF o kadar zengin olur. Boş bırakabilirsiniz ama AI yalnızca senaryo bilgisiyle çalışır."></textarea>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><div class="ci r">▶️</div><div><div class="ct">YouTube URL'leri</div><div class="cd">Kaynak referansı — opsiyonel</div></div></div>
+      <div class="url-list" id="urlList">
+        <div class="url-item">
+          <input type="url" placeholder="https://www.youtube.com/watch?v=..." class="uinp">
+          <button class="url-rm" onclick="rmUrl(this)" type="button">✕</button>
+        </div>
+      </div>
+      <button class="btn btn-g btn-sm" onclick="addUrl()" type="button" style="margin-top:.65rem">+ URL Ekle</button>
+    </div>
+
+    <div class="card">
+      <div class="ch"><div class="ci g">📸</div><div><div class="ct">Senaryo Fotoğrafı</div><div class="cd">WhatsApp'tan gelen MEB senaryo tablosu — OCR otomatik okur</div></div></div>
+      <div class="fdrop" id="fdrop">
+        <input type="file" id="imgFile" accept="image/*" onchange="onFile(event)">
+        <div class="fdi">📷</div>
+        <div class="fdt">Senaryo fotoğrafını buraya sürükleyin veya tıklayın</div>
+        <div class="fdh">JPG · PNG · WEBP — Tesseract OCR ile otomatik okunur</div>
+      </div>
+      <div id="fprev" style="display:none" class="fprev"><img id="pimg" src="" alt="Senaryo önizleme"></div>
+      <div id="ocrSt" style="display:none" class="ocrs proc"><div class="spin"></div><span id="ocrTxt">OCR başlatılıyor...</span></div>
+      <div id="ocrRaw" style="display:none;margin-top:.75rem">
+        <label class="lbl">OCR Ham Metin (düzenlenebilir)</label>
+        <textarea id="ocrTA" rows="5" placeholder="OCR çıktısı burada görünür..."></textarea>
+        <button class="btn btn-sec btn-sm" onclick="parseOCR(document.getElementById('ocrTA').value)" style="margin-top:.5rem" type="button">🔄 Yeniden Parse Et</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><div class="ci gold">💬</div><div><div class="ct">Ekstra Yönlendirme</div><div class="cd">AI'ya özel talimatlar — opsiyonel</div></div></div>
+      <div class="fg">
+        <textarea id="extra" rows="3" placeholder="Örn: 'Newton yasalarına daha fazla ağırlık ver' · 'Açık uçlu soru formatına dikkat et' · 'Bu konuyu atlama'..."></textarea>
+      </div>
+    </div>
+
+    <div class="bgrp">
+      <button class="btn btn-g" onclick="go(1)" type="button">← Geri</button>
+      <button class="btn btn-p btn-lg" onclick="go(3)" type="button">Senaryoyu Düzenle →</button>
+    </div>
+  </div>
+
+  <!-- ═══ STEP 3: SCENARIO ═══ -->
+  <div class="panel" id="p3">
+    <div class="card">
+      <div class="ch"><div class="ci g">📋</div><div><div class="ct">Senaryo Tablosu</div><div class="cd">OCR ile okunan verileri düzenleyin — bu tablo PDF'i yönlendirir</div></div></div>
+      <div class="ib warn" style="margin-bottom:.9rem">
+        <span class="ib-i">⚠️</span>
+        <span>OCR bazı karakterleri yanlış okuyabilir. Kazanım kodlarını ve soru sayılarını mutlaka kontrol edin!</span>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="stbl">
+          <thead><tr><th>Kazanım Kodu</th><th>Konu / Kazanım Açıklaması</th><th style="width:80px">Soru Sayısı</th><th style="width:36px"></th></tr></thead>
+          <tbody id="stbody"></tbody>
+        </table>
+      </div>
+      <button class="add-row" onclick="addRow()" type="button">+ Satır Ekle</button>
+      <div class="frow" style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border)">
+        <div class="fg">
+          <label class="lbl">Senaryo No</label>
+          <input type="text" id="senNo" placeholder="Örn: A, B, Senaryo-1">
+        </div>
+        <div class="fg">
+          <label class="lbl">Toplam Soru</label>
+          <div class="total-box" id="totDisp">0</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bgrp">
+      <button class="btn btn-g" onclick="go(2)" type="button">← Geri</button>
+      <button class="btn btn-p btn-lg" onclick="go(4)" type="button">PDF Üret 🚀</button>
+    </div>
+  </div>
+
+  <!-- ═══ STEP 4: GENERATE ═══ -->
+  <div class="panel" id="p4">
+    <div class="card">
+      <div class="ch"><div class="ci r">📄</div><div><div class="ct">Özet — Her şey hazır</div><div class="cd">Aşağıdaki butona bas ve Süper Zırhlı PDF'ini al</div></div></div>
+      <div class="chips" id="chips"></div>
+    </div>
+
+    <div class="card gencard">
+      <div class="geni" id="geni">🛡️</div>
+      <div class="gent" id="gent">Hazır mısın?</div>
+      <div class="gend" id="gend">Butona basınca AI harekete geçer, içerik üretilir ve PDF indirilir.</div>
+      <button class="btn btn-s btn-lg" id="genBtn" onclick="generate()" type="button">🚀 Süper Zırhlı PDF Üret</button>
+      <div class="pbar" id="pbar" style="display:none"><div class="pfill" id="pfill"></div></div>
+      <div class="slog" id="slog" style="display:none"></div>
+    </div>
+
+    <div class="bgrp">
+      <button class="btn btn-g" onclick="go(3)" type="button">← Geri</button>
+      <button class="btn btn-sec" id="retryBtn" style="display:none" onclick="generate()" type="button">🔄 Tekrar Dene</button>
+    </div>
+  </div>
+
+</main>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   AI PROVIDER ABSTRACTION LAYER
+   Gemini'ye geçmek için: AI_CFG.provider = 'gemini'
+   ═══════════════════════════════════════════════════════════ */
+const AI_CFG = {
+  provider: 'claude',   // ← 'claude' | 'gemini'
+
+  claude: {
+    model: 'claude-sonnet-4-20250514',
+    maxTokens: 8000,
+    getUrl: () => 'https://api.anthropic.com/v1/messages',
+    getHeaders: (key) => ({
+      'Content-Type': 'application/json',
+      'x-api-key': key,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true',
+    }),
+    buildBody: (prompt) => ({
+      model: AI_CFG.claude.model,
+      max_tokens: AI_CFG.claude.maxTokens,
+      messages: [{ role: 'user', content: prompt }],
+    }),
+    parse: (d) => d.content[0].text,
+  },
+
+  gemini: {
+    model: 'gemini-2.0-flash',
+    maxTokens: 8000,
+    getUrl: (key) => `https://generativelanguage.googleapis.com/v1beta/models/${AI_CFG.gemini.model}:generateContent?key=${key}`,
+    getHeaders: () => ({ 'Content-Type': 'application/json' }),
+    buildBody: (prompt) => ({
+      contents: [{ parts: [{ text: prompt }] }],
+      generationConfig: { maxOutputTokens: AI_CFG.gemini.maxTokens, temperature: 0.7 },
+    }),
+    parse: (d) => d.candidates[0].content.parts[0].text,
+  },
+};
+
+async function callAI(prompt, key) {
+  const cfg = AI_CFG[AI_CFG.provider];
+  const url  = cfg.getUrl(key);
+  const res  = await fetch(url, {
+    method: 'POST',
+    headers: cfg.getHeaders(key),
+    body: JSON.stringify(cfg.buildBody(prompt)),
+  });
+  if (!res.ok) {
+    let msg = `HTTP ${res.status}`;
+    try { const j = await res.json(); msg = j.error?.message || j.message || msg; } catch {}
+    throw new Error(msg);
+  }
+  return cfg.parse(await res.json());
+}
+
+/* ─── STATE ─── */
+let curStep = 1;
+let rows = [];   // { code, topic, count }
+
+/* ─── INIT ─── */
+document.addEventListener('DOMContentLoaded', () => {
+  const prov = localStorage.getItem('sz_prov') || 'claude';
+  AI_CFG.provider = prov;
+  setProv(prov, false);
+
+  const key = localStorage.getItem(`sz_key_${prov}`);
+  if (key) document.getElementById('apiKey').value = key;
+
+  addRow('', '', 1);
+  calcTotal();
+
+  // Drag & drop
+  const fd = document.getElementById('fdrop');
+  fd.addEventListener('dragover', e => { e.preventDefault(); fd.classList.add('on'); });
+  fd.addEventListener('dragleave', () => fd.classList.remove('on'));
+  fd.addEventListener('drop', e => {
+    e.preventDefault(); fd.classList.remove('on');
+    const f = e.dataTransfer.files[0];
+    if (f) handleImg(f);
+  });
+});
+
+/* ─── PROVIDER ─── */
+function setProv(name, save = true) {
+  AI_CFG.provider = name;
+  document.getElementById('pClaude').classList.toggle('sel', name === 'claude');
+  document.getElementById('pGemini').classList.toggle('sel', name === 'gemini');
+  const lbl = document.getElementById('keyLbl');
+  const inp = document.getElementById('apiKey');
+  if (name === 'claude') { lbl.textContent = 'Claude API Key'; inp.placeholder = 'sk-ant-api03-...'; }
+  else                   { lbl.textContent = 'Gemini API Key'; inp.placeholder = 'AIzaSy...'; }
+  const saved = localStorage.getItem(`sz_key_${name}`);
+  if (saved) inp.value = saved; else inp.value = '';
+  if (save) localStorage.setItem('sz_prov', name);
+}
+
+function toggleKey() {
+  const i = document.getElementById('apiKey');
+  i.type = i.type === 'password' ? 'text' : 'password';
+}
+
+/* ─── NAVIGATION ─── */
+function go(n) {
+  // Validate
+  if (curStep === 1 && n > 1) {
+    const k = document.getElementById('apiKey').value.trim();
+    if (!k) { toast('API Key girmelisiniz!', 'err'); return; }
+    localStorage.setItem('sz_key', k);
+    localStorage.setItem(`sz_key_${AI_CFG.provider}`, k);
+  }
+  if (curStep === 2 && n > 2) {
+    const ocrText = document.getElementById('ocrTA').value.trim();
+    const allEmpty = rows.every(r => !r || !r.topic || r.topic.length < 2);
+    if (ocrText && allEmpty) parseOCR(ocrText);
+  }
+  if (n === 4) buildChips();
+
+  document.getElementById(`p${curStep}`).classList.remove('active');
+  curStep = n;
+  document.getElementById(`p${curStep}`).classList.add('active');
+
+  for (let i = 1; i <= 4; i++) {
+    const sc = document.getElementById(`sc${i}`);
+    const sl = document.getElementById(`sl${i}`);
+    sc.classList.remove('active', 'done');
+    sl.classList.remove('active', 'done');
+    if (i < curStep)      { sc.classList.add('done');   sl.classList.add('done'); }
+    else if (i === curStep){ sc.classList.add('active'); sl.classList.add('active'); }
+    if (i < 4) {
+      const cn = document.getElementById(`cn${i}`);
+      cn.classList.toggle('done', i < curStep);
+    }
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ─── URL LIST ─── */
+function addUrl() {
+  const list = document.getElementById('urlList');
+  const d = document.createElement('div');
+  d.className = 'url-item';
+  d.innerHTML = `<input type="url" placeholder="https://www.youtube.com/watch?v=..." class="uinp"><button class="url-rm" onclick="rmUrl(this)" type="button">✕</button>`;
+  list.appendChild(d);
+}
+function rmUrl(btn) {
+  const list = document.getElementById('urlList');
+  if (list.children.length > 1) btn.parentElement.remove();
+  else btn.previousElementSibling.value = '';
+}
+function getUrls() {
+  return [...document.querySelectorAll('.uinp')].map(i => i.value.trim()).filter(Boolean);
+}
+
+/* ─── FILE / OCR ─── */
+function onFile(e) { const f = e.target.files[0]; if (f) handleImg(f); }
+
+function handleImg(file) {
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById('pimg').src = e.target.result;
+    document.getElementById('fprev').style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+  runOCR(file);
+}
+
+async function runOCR(file) {
+  const st  = document.getElementById('ocrSt');
+  const txt = document.getElementById('ocrTxt');
+  st.style.display = 'flex';
+  st.className = 'ocrs proc';
+  txt.textContent = 'Tesseract yükleniyor (ilk seferinde ~15 sn)...';
+  try {
+    const { data: { text } } = await Tesseract.recognize(file, 'tur+eng', {
+      logger: m => {
+        if (m.status === 'recognizing text')
+          txt.textContent = `OCR işleniyor... %${Math.round(m.progress * 100)}`;
+      },
+    });
+    st.className = 'ocrs ok';
+    txt.textContent = '✓ OCR tamamlandı — Senaryo adımında düzenleyebilirsiniz';
+    document.getElementById('ocrRaw').style.display = 'block';
+    document.getElementById('ocrTA').value = text;
+    parseOCR(text);
+  } catch (err) {
+    st.className = 'ocrs err';
+    txt.textContent = `OCR hatası: ${err.message} — Senaryoyu manuel girin`;
+    document.getElementById('ocrRaw').style.display = 'block';
+  }
+}
+
+function parseOCR(text) {
+  const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+  // Kazanım kodu pattern: FİZ.9.1.1 / MAT.9.2.3 / COĞ.9.1.1 etc.
+  const codeRx = /[A-ZÇŞÜĞİÖ]{2,5}\.?\s*\d+\.\d+\.?\d*/gi;
+  const parsed = [];
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const codes = line.match(codeRx);
+    const numMatch = line.match(/\b(\d{1,2})\s*$/) || line.match(/^\s*(\d{1,2})\b/);
+    const count = numMatch ? Math.min(parseInt(numMatch[1]), 30) : 1;
+    if (codes && codes.length > 0) {
+      const code = codes[0].replace(/\s/g,'').toUpperCase();
+      let topic = line.replace(codes[0], '').replace(/\b\d{1,2}\s*$/, '').trim();
+      if (topic.length < 4 && i + 1 < lines.length) topic = lines[i + 1];
+      parsed.push({ code, topic: topic || 'Konu', count });
+    }
+  }
+
+  // Fallback: parse as plain text table rows
+  if (parsed.length === 0) {
+    for (const line of lines.slice(0, 15)) {
+      if (line.length < 4) continue;
+      const numM = line.match(/(\d{1,2})\s*$/);
+      const count = numM ? Math.min(parseInt(numM[1]), 30) : 1;
+      parsed.push({ code: '', topic: line.replace(/\d{1,2}\s*$/, '').trim(), count });
+    }
+  }
+
+  if (parsed.length > 0) {
+    document.getElementById('stbody').innerHTML = '';
+    rows = [];
+    parsed.forEach(r => addRow(r.code, r.topic, r.count));
+    calcTotal();
+    toast(`${parsed.length} kazanım algılandı`, 'ok');
+  }
+}
+
+/* ─── SCENARIO TABLE ─── */
+function addRow(code = '', topic = '', count = 1) {
+  const idx = rows.length;
+  rows.push({ code, topic, count });
+  const tbody = document.getElementById('stbody');
+  const tr = document.createElement('tr');
+  tr.dataset.idx = idx;
+  tr.innerHTML = `
+    <td><input type="text" value="${esc(code)}" placeholder="FİZ.9.1.1" oninput="upRow(${idx},'code',this.value)" style="width:110px"></td>
+    <td><input type="text" value="${esc(topic)}" placeholder="Konu veya kazanım açıklaması" oninput="upRow(${idx},'topic',this.value)"></td>
+    <td><input type="number" value="${count}" min="1" max="30" oninput="upRow(${idx},'count',+this.value);calcTotal()"></td>
+    <td><button class="row-rm" onclick="rmRow(${idx})" type="button">✕</button></td>`;
+  tbody.appendChild(tr);
+  calcTotal();
+}
+function upRow(i, f, v) { if (rows[i]) rows[i][f] = v; }
+function rmRow(i) {
+  document.querySelector(`#stbody tr[data-idx="${i}"]`)?.remove();
+  rows[i] = null;
+  calcTotal();
+}
+function calcTotal() {
+  const t = rows.filter(Boolean).reduce((s, r) => s + (parseInt(r.count) || 0), 0);
+  document.getElementById('totDisp').textContent = t;
+}
+function activeRows() { return rows.filter(r => r && r.topic && r.topic.trim().length > 1); }
+
+/* ─── STEP 4 SUMMARY ─── */
+function buildChips() {
+  const ders = document.getElementById('ders').value;
+  const tr   = document.getElementById('transcript').value.trim();
+  const urls = getUrls();
+  const ar   = activeRows();
+  const chips = [
+    { label: ders, ok: true, icon: '📚' },
+    { label: AI_CFG.provider === 'claude' ? 'Claude API' : 'Gemini API', ok: true, icon: '🤖' },
+    { label: tr.length > 0 ? `${tr.length} karakter transkript` : 'Transkript yok', ok: tr.length > 100, icon: '📝' },
+    { label: `${urls.length} YouTube URL`, ok: urls.length > 0, icon: '▶️' },
+    { label: `${ar.length} kazanım`, ok: ar.length > 0, icon: '📋' },
+  ];
+  document.getElementById('chips').innerHTML = chips
+    .map(c => `<div class="chip ${c.ok ? 'ok' : ''}">${c.icon} ${c.label}</div>`)
+    .join('');
+}
+
+/* ─── LOG ─── */
+function log(msg, type = 'inf') {
+  const el = document.getElementById('slog');
+  el.style.display = 'block';
+  const t = new Date().toLocaleTimeString('tr-TR');
+  const icons = { inf: '›', ok: '✓', err: '✗' };
+  const d = document.createElement('div');
+  d.className = `ll l${type}`;
+  d.innerHTML = `<span class="lt">[${t}]</span> ${icons[type] || '›'} ${msg}`;
+  el.appendChild(d);
+  el.scrollTop = el.scrollHeight;
+}
+function setP(pct) {
+  document.getElementById('pbar').style.display = 'block';
+  document.getElementById('pfill').style.width = pct + '%';
+}
+
+/* ─── BUILD PROMPT ─── */
+function buildPrompt() {
+  const ders    = document.getElementById('ders').value;
+  const sinif   = document.getElementById('sinif').value;
+  const donem   = document.getElementById('donem').value;
+  const yazili  = document.getElementById('yazili').value;
+  const senNo   = document.getElementById('senNo').value.trim() || 'A';
+  const tr      = document.getElementById('transcript').value.trim();
+  const urls    = getUrls();
+  const extra   = document.getElementById('extra').value.trim();
+  const ar      = activeRows();
+
+  const scenTxt = ar.map(r =>
+    `- Kazanım: ${r.code || 'Belirtilmemiş'} | Konu: ${r.topic} | Soru Sayısı: ${r.count}`
+  ).join('\n') || '- Senaryo bilgisi girilmedi';
+
+  const urlTxt = urls.length > 0 ? urls.join('\n') : 'Belirtilmedi';
+
+  return `Sen bir ${ders} sınav hazırlık uzmanısın. ${sinif}. sınıf ${donem}. dönem ${yazili}. yazılısı için eksiksiz bir sınav notu hazırla.
+
+DERS: ${ders} | SINIF: ${sinif}. Sınıf | DÖNEM: ${donem}. Dönem | YAZILI: ${yazili}. Yazılı | SENARYO: ${senNo}
+
+MEB SENARYO (soru dağılımı — KESİNLİKLE UYULACAK):
+${scenTxt}
+
+YOUTUBE KAYNAKLARI:
+${urlTxt}
+${tr ? `\nTRANSKRİPT / DERS NOTLARI:\n${tr.substring(0, 6000)}` : ''}
+${extra ? `\nEKSTRA YÖNLENDİRME:\n${extra}` : ''}
+
+GÖREVLER:
+1. Her kazanım için kavramlar, formüller, terimler
+2. Her kazanım için "bunu bilmezsen soruyu çözemezsin" bilgileri
+3. Senaryodaki soru sayısına göre soru + adım adım çözüm
+4. Her konu için 85+ puan tuzakları (hocaların en çok puan kırdığı noktalar)
+5. Her konu için "hoca bunu nasıl sorar?" refleks stratejisi
+6. Tüm konuları özetleyen hızlı tekrar tablosu
+
+KURALLAR:
+- SADECE JSON döndür. Başında veya sonunda açıklama YAZMA.
+- Türkçe bilimsel terim kullan.
+- Formülleri açık metin yaz: "F = m x a", "v^2 = v0^2 + 2as"
+- Her bolum senaryo soru sayısı kadar soru içermeli.
+- JSON dışında HİÇBİR ŞEY yazma.
+
+JSON ŞEMASI:
+{
+  "baslik": "${ders} ${sinif}. Sınıf ${donem}. Dönem ${yazili}. Yazılı Hazırlık Notu",
+  "ders": "${ders}", "sinif": "${sinif}", "donem": "${donem}",
+  "yazili_no": "${yazili}", "senaryo_no": "${senNo}",
+  "bolumler": [
+    {
+      "kazanim_kodu": "FİZ.9.1.1",
+      "baslik": "Konu Başlığı",
+      "kavramlar": [{"terim": "...", "tanim": "..."}],
+      "formuller": [{"isim": "...", "formul": "...", "aciklama": "..."}],
+      "kritik_bilgiler": ["...", "..."],
+      "sorular": [
+        {
+          "soru_no": 1,
+          "soru": "Soru metni...",
+          "cozum_adimlari": ["1. Adım: ...", "2. Adım: ...", "Sonuç: ..."]
+        }
+      ],
+      "tuzak": "85+ Tuzak: ...",
+      "refleks": "Hoca bunu nasıl sorar: ... | Refleks cevap: ..."
+    }
+  ],
+  "hizli_tekrar": [{"kavram": "...", "formul_veya_kural": "...", "kritik_not": "..."}],
+  "son_dakika": ["...", "..."]
+}`;
+}
+
+/* ─── GENERATE ─── */
+async function generate() {
+  const key = document.getElementById('apiKey').value.trim()
+    || localStorage.getItem(`sz_key_${AI_CFG.provider}`)
+    || localStorage.getItem('sz_key');
+  if (!key) { toast('API Key bulunamadı! Adım 1\'e dönün.', 'err'); return; }
+
+  const genBtn  = document.getElementById('genBtn');
+  const retryBtn= document.getElementById('retryBtn');
+  const geni    = document.getElementById('geni');
+  const gent    = document.getElementById('gent');
+  const gend    = document.getElementById('gend');
+
+  genBtn.disabled = true; retryBtn.style.display = 'none';
+  geni.textContent = '⏳'; gent.textContent = 'AI içerik üretiyor...';
+  gend.textContent = 'Bu 30–90 saniye sürebilir. Sayfayı kapatmayın.';
+  document.getElementById('slog').innerHTML = '';
+  document.getElementById('slog').style.display = 'none';
+
+  const prov = AI_CFG.provider === 'claude' ? 'Claude' : 'Gemini';
+  log(`${prov} API bağlantısı kuruluyor...`);
+  setP(10);
+
+  try {
+    const prompt = buildPrompt();
+    log('Prompt hazırlandı, gönderiliyor...');
+    setP(20);
+
+    const raw = await callAI(prompt, key);
+    log('AI yanıtı alındı', 'ok');
+    setP(60);
+
+    // Parse JSON
+    let data;
+    try {
+      const m = raw.match(/\{[\s\S]*\}/);
+      if (!m) throw new Error('JSON bloğu bulunamadı');
+      data = JSON.parse(m[0]);
+    } catch (e) {
+      throw new Error(`JSON parse hatası: ${e.message}\n\nHam yanıt (ilk 300 karakter):\n${raw.substring(0, 300)}`);
+    }
+    log('JSON parse edildi', 'ok');
+    setP(70);
+
+    log('PDF oluşturuluyor...');
+    await makePDF(data);
+    setP(100);
+    log('PDF indirildi!', 'ok');
+
+    geni.textContent = '✅'; gent.textContent = 'PDF Hazır!';
+    gend.textContent = 'Süper Zırhlı notun indirildi. Sınava hazırsın! 🎉';
+    genBtn.textContent = '🔄 Yeniden Üret';
+    genBtn.disabled = false;
+    toast('Süper Zırhlı PDF indirildi! 🎉', 'ok');
+
+  } catch (err) {
+    log(`Hata: ${err.message}`, 'err');
+    geni.textContent = '❌'; gent.textContent = 'Bir hata oluştu';
+    gend.textContent = err.message.substring(0, 200);
+    genBtn.disabled = false; retryBtn.style.display = 'inline-flex';
+    toast('Hata oluştu — log\'u kontrol edin', 'err');
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   PDF BUILDER — jsPDF + AutoTable
+   ═══════════════════════════════════════════════════════════ */
+async function makePDF(data) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+  const PW = doc.internal.pageSize.getWidth();   // 210
+  const PH = doc.internal.pageSize.getHeight();  // 297
+  const ML = 13, MR = 13, CW = PW - ML - MR;
+
+  // Palette
+  const NAVY   = [26, 26, 46];
+  const NAVY2  = [15, 52, 96];
+  const RED    = [233, 69, 96];
+  const RED_P  = [255, 243, 243];
+  const GREEN  = [26, 107, 60];
+  const GRN_P  = [240, 255, 246];
+  const BLU_P  = [240, 248, 255];
+  const STRIPE = [232, 237, 248];
+  const GOLD   = [240, 165, 0];
+  const WHITE  = [255, 255, 255];
+  const BLACK  = [20, 20, 30];
+  const GRAY   = [100, 116, 139];
+
+  let y = 0, pg = 1;
+
+  function footer() {
+    doc.setFontSize(7.5); doc.setTextColor(...GRAY);
+    const left = `${data.ders || ''} | ${data.sinif}. Sınıf | ${data.donem}. Dönem | ${data.yazili_no}. Yazılı | Senaryo ${data.senaryo_no || 'A'}`;
+    doc.text(left, ML, PH - 6);
+    doc.text(String(pg), PW - ML, PH - 6, { align: 'right' });
+    doc.setDrawColor(...GRAY); doc.setLineWidth(0.2);
+    doc.line(ML, PH - 9, PW - MR, PH - 9);
+  }
+
+  function newPage() {
+    doc.addPage(); pg++; y = 18; footer();
+  }
+
+  function chk(need = 20) { if (y + need > PH - 14) newPage(); }
+
+  function sf(style, size) {
+    doc.setFontSize(size);
+    try { doc.setFont('helvetica', style); } catch {}
+  }
+
+  /* ── COVER PAGE ── */
+  // Background
+  doc.setFillColor(...NAVY); doc.rect(0, 0, PW, PH, 'F');
+  // Top accent
+  doc.setFillColor(...RED); doc.rect(0, 0, PW, 5, 'F');
+  // Bottom panel
+  doc.setFillColor(...NAVY2); doc.rect(0, PH - 55, PW, 55, 'F');
+  // Diagonal decorative lines
+  doc.setDrawColor(255, 255, 255, 5); doc.setLineWidth(0.3);
+  for (let i = 0; i < 8; i++) {
+    const xo = i * 30;
+    doc.line(xo, 0, xo + 60, PH);
+  }
+
+  // Icon area
+  sf('bold', 48); doc.setTextColor(...RED);
+  doc.text('🛡️', PW / 2, 58, { align: 'center' });
+
+  sf('bold', 22); doc.setTextColor(...RED);
+  doc.text('SUPER ZIRHLII', PW / 2, 76, { align: 'center' });
+
+  sf('normal', 11); doc.setTextColor(190, 205, 230);
+  doc.text('SINAV HAZIRLIK NOTU', PW / 2, 85, { align: 'center' });
+
+  // Divider
+  doc.setDrawColor(...RED); doc.setLineWidth(0.8);
+  doc.line(ML + 25, 92, PW - MR - 25, 92);
+
+  // Subject box
+  doc.setFillColor(...NAVY2); doc.roundedRect(ML, 98, CW, 42, 4, 4, 'F');
+  sf('bold', 22); doc.setTextColor(...WHITE);
+  doc.text(data.ders || 'Ders', PW / 2, 115, { align: 'center' });
+  sf('normal', 10); doc.setTextColor(175, 200, 235);
+  const infoLine = `${data.sinif}. Sinif  |  ${data.donem}. Donem  |  ${data.yazili_no}. Yazili  |  Senaryo ${data.senaryo_no || 'A'}`;
+  doc.text(infoLine, PW / 2, 127, { align: 'center' });
+
+  // Topic distribution table on cover
+  const bolumler = data.bolumler || [];
+  const coverRows = bolumler.map(b => [
+    b.kazanim_kodu || '—',
+    b.baslik || '',
+    String((b.sorular || []).length) + ' Soru',
+  ]);
+
+  if (coverRows.length > 0) {
+    doc.autoTable({
+      startY: 148,
+      head: [['Kazanim Kodu', 'Konu', 'Soru Sayisi']],
+      body: coverRows,
+      margin: { left: ML, right: MR },
+      styles: { fontSize: 8.5, cellPadding: 2.8, textColor: [210, 220, 245], fillColor: [22, 33, 60], lineColor: [45, 65, 110], lineWidth: 0.25 },
+      headStyles: { fillColor: RED, textColor: WHITE, fontStyle: 'bold', fontSize: 8.5 },
+      alternateRowStyles: { fillColor: [18, 28, 52] },
+    });
+  }
+
+  // Date
+  sf('normal', 7.5); doc.setTextColor(90, 110, 155);
+  const dateStr = new Date().toLocaleDateString('tr-TR', { day: '2-digit', month: 'long', year: 'numeric' });
+  doc.text(`Olusturulma: ${dateStr}  |  Super Zirhlii PDF Ureticisi`, PW / 2, PH - 8, { align: 'center' });
+
+  /* ── CONTENT PAGES ── */
+  doc.addPage(); pg = 2; y = 18; footer();
+
+  for (let bi = 0; bi < bolumler.length; bi++) {
+    const b = bolumler[bi];
+
+    chk(30);
+
+    // ── Section Header ──
+    doc.setFillColor(...NAVY); doc.rect(ML - 2, y - 5, CW + 4, 14, 'F');
+    doc.setFillColor(...RED);  doc.rect(ML - 2, y - 5, 4, 14, 'F');
+
+    sf('bold', 11.5); doc.setTextColor(...WHITE);
+    const secTitle = `${b.kazanim_kodu ? b.kazanim_kodu + '  —  ' : ''}${b.baslik || 'Konu'}`;
+    const secLines = doc.splitTextToSize(secTitle, CW - 30);
+    doc.text(secLines, ML + 6, y + 4);
+
+    const sqCount = (b.sorular || []).length;
+    if (sqCount) {
+      sf('bold', 8); doc.setTextColor(...RED);
+      doc.text(`${sqCount} Soru`, PW - MR, y + 4, { align: 'right' });
+    }
+    y += 16;
+
+    // ── Concepts & Formulas Table ──
+    const tRows = [];
+    (b.kavramlar || []).forEach(k => tRows.push([k.terim || '', k.tanim || '', '']));
+    (b.formuller || []).forEach(f => tRows.push([f.isim || '', f.formul || '', f.aciklama || '']));
+
+    if (tRows.length > 0) {
+      chk(12);
+      sf('bold', 8.5); doc.setTextColor(...NAVY2);
+      doc.text('  Kavramlar ve Formuller', ML, y); y += 4;
+
+      doc.autoTable({
+        startY: y,
+        head: [['Terim / Formul', 'Icerik', 'Aciklama']],
+        body: tRows,
+        margin: { left: ML, right: MR },
+        styles: { fontSize: 8.2, cellPadding: 2.5, textColor: BLACK, lineColor: [210, 218, 235], lineWidth: 0.2, overflow: 'linebreak' },
+        headStyles: { fillColor: NAVY, textColor: WHITE, fontStyle: 'bold', fontSize: 8.2 },
+        alternateRowStyles: { fillColor: STRIPE },
+        columnStyles: { 0: { cellWidth: 42, fontStyle: 'bold' }, 1: { cellWidth: 78 }, 2: { cellWidth: 'auto' } },
+        didDrawPage: () => { if (pg < doc.getNumberOfPages()) { pg = doc.getNumberOfPages(); footer(); } },
+      });
+      y = doc.lastAutoTable.finalY + 6;
+    }
+
+    // ── Critical Info ──
+    if (b.kritik_bilgiler && b.kritik_bilgiler.length > 0) {
+      chk(18);
+      sf('bold', 8.5); doc.setTextColor(...NAVY2);
+      doc.text('  Kritik Bilgiler', ML, y); y += 5;
+
+      for (const kb of b.kritik_bilgiler) {
+        const ls = doc.splitTextToSize(`• ${kb}`, CW - 5);
+        chk(ls.length * 4.5 + 2);
+        sf('normal', 8.2); doc.setTextColor(...BLACK);
+        doc.text(ls, ML + 3, y);
+        y += ls.length * 4.5 + 1;
+      }
+      y += 4;
+    }
+
+    // ── Questions ──
+    if (b.sorular && b.sorular.length > 0) {
+      chk(22);
+      sf('bold', 8.5); doc.setTextColor(...NAVY2);
+      doc.text('  Senaryo Uyumlu Sorular', ML, y); y += 5;
+
+      for (let si = 0; si < b.sorular.length; si++) {
+        const s = b.sorular[si];
+        const qTxt = `Soru ${s.soru_no || si + 1}: ${s.soru}`;
+        const qLines = doc.splitTextToSize(qTxt, CW - 8);
+        const qH = qLines.length * 4.8 + 9;
+        chk(qH + 5);
+
+        // Blue box
+        doc.setFillColor(...BLU_P);
+        doc.setDrawColor(100, 155, 220); doc.setLineWidth(0.45);
+        doc.roundedRect(ML, y - 2, CW, qH, 2.5, 2.5, 'FD');
+        sf('bold', 8.5); doc.setTextColor(...NAVY2);
+        doc.text(qLines, ML + 4, y + 3);
+        y += qH + 3;
+
+        // Steps
+        if (s.cozum_adimlari && s.cozum_adimlari.length > 0) {
+          sf('bold', 7.8); doc.setTextColor(...NAVY);
+          doc.text('Cozum:', ML + 4, y); y += 4;
+          for (const step of s.cozum_adimlari) {
+            const sls = doc.splitTextToSize(step, CW - 12);
+            chk(sls.length * 4.2 + 2);
+            sf('normal', 7.8); doc.setTextColor(...BLACK);
+            doc.text(sls, ML + 7, y);
+            y += sls.length * 4.2 + 1;
+          }
+          y += 4;
+        }
+      }
+    }
+
+    // ── 85+ Tuzak ──
+    if (b.tuzak) {
+      const tzLines = doc.splitTextToSize(`85+ TAM PUAN TUZAGI: ${b.tuzak}`, CW - 9);
+      const tzH = tzLines.length * 4.8 + 11;
+      chk(tzH + 4);
+
+      doc.setFillColor(...RED_P);
+      doc.setDrawColor(...RED); doc.setLineWidth(1.2);
+      doc.roundedRect(ML, y, CW, tzH, 3, 3, 'FD');
+      sf('bold', 8.2); doc.setTextColor(...RED);
+      doc.text('⚠ ' + tzLines.join('\n'), ML + 5, y + 7);
+      // Rewrite properly
+      doc.setFillColor(...RED_P);
+      doc.setDrawColor(...RED); doc.setLineWidth(1.2);
+      doc.roundedRect(ML, y, CW, tzH, 3, 3, 'FD');
+      sf('bold', 8.2); doc.setTextColor(...RED);
+      doc.text(tzLines, ML + 5, y + 7);
+      y += tzH + 5;
+    }
+
+    // ── Refleks ──
+    if (b.refleks) {
+      const rfLines = doc.splitTextToSize(`FORMAT REFLEKS: ${b.refleks}`, CW - 9);
+      const rfH = rfLines.length * 4.8 + 11;
+      chk(rfH + 4);
+
+      doc.setFillColor(...GRN_P);
+      doc.setDrawColor(...GREEN); doc.setLineWidth(1.2);
+      doc.roundedRect(ML, y, CW, rfH, 3, 3, 'FD');
+      sf('bold', 8.2); doc.setTextColor(...GREEN);
+      doc.text(rfLines, ML + 5, y + 7);
+      y += rfH + 8;
+    }
+
+    // Section divider
+    if (bi < bolumler.length - 1) {
+      chk(6);
+      doc.setDrawColor(...STRIPE); doc.setLineWidth(0.3);
+      doc.line(ML, y, PW - MR, y); y += 9;
+    }
+  }
+
+  /* ── QUICK REVIEW PAGE ── */
+  newPage();
+
+  // Header
+  doc.setFillColor(...NAVY2); doc.rect(ML - 2, y - 5, CW + 4, 14, 'F');
+  doc.setFillColor(...GOLD);  doc.rect(ML - 2, y - 5, 4, 14, 'F');
+  sf('bold', 12); doc.setTextColor(...WHITE);
+  doc.text('HIZLI TEKRAR OZETI  —  Sinava 30 Dakika Kala', ML + 6, y + 4);
+  y += 18;
+
+  const tekrar = (data.hizli_tekrar || []).map(t => [
+    t.kavram || '', t.formul_veya_kural || '', t.kritik_not || '',
+  ]);
+
+  if (tekrar.length > 0) {
+    doc.autoTable({
+      startY: y,
+      head: [['Kavram', 'Formul / Kural', 'Kritik Not']],
+      body: tekrar,
+      margin: { left: ML, right: MR },
+      styles: { fontSize: 8.2, cellPadding: 2.8, textColor: BLACK, lineColor: [210, 218, 235], lineWidth: 0.2, overflow: 'linebreak' },
+      headStyles: { fillColor: NAVY2, textColor: WHITE, fontStyle: 'bold' },
+      alternateRowStyles: { fillColor: STRIPE },
+      columnStyles: { 0: { cellWidth: 45, fontStyle: 'bold' }, 1: { cellWidth: 72 }, 2: { cellWidth: 'auto' } },
+      didDrawPage: () => { if (pg < doc.getNumberOfPages()) { pg = doc.getNumberOfPages(); footer(); } },
+    });
+    y = doc.lastAutoTable.finalY + 10;
+  }
+
+  // Son dakika box
+  if (data.son_dakika && data.son_dakika.length > 0) {
+    const sdTxt = data.son_dakika.map((s, i) => `${i + 1}. ${s}`).join('\n');
+    const sdLines = doc.splitTextToSize(sdTxt, CW - 10);
+    const sdH = sdLines.length * 4.8 + 18;
+    chk(sdH);
+
+    doc.setFillColor(...RED_P);
+    doc.setDrawColor(...RED); doc.setLineWidth(1.5);
+    doc.roundedRect(ML, y, CW, sdH, 4, 4, 'FD');
+    sf('bold', 10); doc.setTextColor(...RED);
+    doc.text('SON DAKIKA HATIRLATMALARI', ML + 5, y + 8);
+    sf('normal', 8.2); doc.setTextColor(...BLACK);
+    doc.text(sdLines, ML + 5, y + 15);
+    y += sdH + 8;
+  }
+
+  // Save
+  const fn = `SuperZirhlii_${(data.ders || 'Sinav').replace(/\s+/g, '_')}_${data.sinif}Sinif_${data.donem}Donem_${data.yazili_no}Yazili.pdf`;
+  doc.save(fn);
+}
+
+/* ─── UTILITIES ─── */
+function toast(msg, type = 'inf') {
+  document.querySelector('.toast')?.remove();
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 4500);
+}
+
+function esc(s) {
+  return String(s || '')
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+</script>
+</body>
+</html>
