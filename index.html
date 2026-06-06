@@ -778,12 +778,12 @@ async function callGroq(prompt, apiKey) {
 
       if (!res.ok) {
         const e = await res.json().catch(() => ({}));
-        throw new Error(e.error?.message || \`Groq HTTP \${res.status}\`);
+        throw new Error(e.error?.message || `Groq HTTP ${res.status}`);
       }
       return (await res.json()).choices[0].message.content;
     } catch (e) {
       lastError = e;
-      console.warn(\`\${model} failed: \${e.message}\`);
+      console.warn(`${model} failed: ${e.message}`);
       // If we have UI logger, we could log it but let's just keep trying
     }
   }
