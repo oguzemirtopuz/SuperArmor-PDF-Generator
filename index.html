@@ -590,17 +590,21 @@ const PROXIES = [
   u => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}`,
 ];
 
-// Try ALL proxies in parallel — first to succeed wins
-async function proxyFetch(url, timeout = 10000) {
+// Try ALL proxies in PARALLEL — first to succeed wins
+async function proxyFetch(url, timeout = 8000) {
   const results = await Promise.allSettled(
     PROXIES.map(mk => new Promise(async (res, rej) => {
       const ctrl = new AbortController();
-      const tid  = setTimeout(() => ctrl.abort(), timeout);
+      const tid  = setTimeout(() => { ctrl.abort(); rej(new Error('timeout')); }, timeout);
       try {
         const r = await fetch(mk(url), { signal: ctrl.signal });
+        if (!r.ok) { clearTimeout(tid); rej(new Error(`HTTP ${r.status}`)); return; }
+        const text = await Promise.race([
+          r.text(),
+          new Promise((_, bRej) => setTimeout(() => bRej(new Error('body timeout')), timeout)),
+        ]);
         clearTimeout(tid);
-        if (r.ok) res(await r.text());
-        else rej(new Error(`HTTP ${r.status}`));
+        res(text);
       } catch(e) { clearTimeout(tid); rej(e); }
     }))
   );
@@ -609,49 +613,74 @@ async function proxyFetch(url, timeout = 10000) {
   throw new Error('Tüm proxy\'ler başarısız');
 }
 
-// Per-video overall timeout wrapper
-async function fetchTranscriptWithTimeout(videoId, totalMs = 25000) {
+async function tryYoutubeTranscriptCom(videoId) {
+  try {
+    const urls = [
+      `https://youtubetranscript.com/?server_vid2=${videoId}`,
+      `https://youtubetranscript.com/?server_vid=${videoId}`,
+    ];
+    const attempts = urls.map(u => proxyFetch(u, 8000)
+      .then(xml => {
+        if (!xml?.includes('<text')) throw new Error('no transcript');
+        const r = parseTranscriptXml(xml);
+        if (!r || r.length < 30) throw new Error('too short');
+        return r;
+      })
+    );
+    const result = await Promise.race([
+      Promise.any(attempts).catch(() => null),
+      new Promise(r => setTimeout(() => r(null), 9000)),
+    ]);
+    if (result) { addLog('  → Strateji 0 (YT-Transcript.com) başarılı', 'ok'); }
+    return result;
+  } catch { return null; }
+}
+
+async function fetchTranscriptWithTimeout(videoId, totalMs = 15000) {
   return Promise.race([
     fetchTranscript(videoId),
-    new Promise((_, rej) => setTimeout(() => rej(new Error('Transkript zaman aşımı (25s) — altyazı olmayabilir')), totalMs)),
+    new Promise((_, rej) => setTimeout(() => rej(new Error(`Transkript zaman aşımı (${totalMs/1000}s) — video altyazısı olmayabilir`)), totalMs)),
   ]);
 }
 
 async function fetchTranscript(videoId) {
-  // ── Strategy 1: Direct YouTube Timedtext API ──────────────────────
+  addLog('  → Strateji 0: YT-Transcript.com...');
+  const s0 = await tryYoutubeTranscriptCom(videoId);
+  if (s0) return s0;
+
+  addLog('  → Strateji 1: YouTube timedtext API...');
   const s1 = await tryTimedtext(videoId);
   if (s1) return s1;
 
-  // ── Strategy 2: Parse YouTube Watch Page ──────────────────────────
-  const s2 = await tryWatchPage(videoId);
+  addLog('  → Strateji 2: Invidious API...');
+  const s2 = await tryInvidious(videoId);
   if (s2) return s2;
 
-  // ── Strategy 3: Invidious Open API ───────────────────────────────
-  const s3 = await tryInvidious(videoId);
-  if (s3) return s3;
-
-  throw new Error('Transkript çekilemedi (3 yöntem denendi)');
+  throw new Error('Transkript çekilemedi — video altyazısı olmayabilir');
 }
 
-// Strategy 1 — Direct YouTube /api/timedtext with multiple lang/format combos
 async function tryTimedtext(videoId) {
-  const langs = ['tr', 'tr-TR', 'en', 'en-US', ''];
-  const fmts  = ['json3', 'srv3', 'srv2', 'srv1'];
-  for (const lang of langs) {
-    for (const fmt of fmts) {
-      try {
-        const params = new URLSearchParams({ v: videoId, fmt });
-        if (lang) params.set('lang', lang);
-        // Also try asr (auto-generated)
-        const url = `https://www.youtube.com/api/timedtext?${params}`;
-        const raw = await proxyFetch(url, 9000);
-        if (!raw || raw.length < 30) continue;
-        const parsed = parseTranscriptRaw(raw, fmt);
-        if (parsed && parsed.length > 30) return parsed;
-      } catch {}
-    }
-  }
-  return null;
+  // All combos run in PARALLEL — first success wins, 10s hard cap
+  const combos = [
+    {lang:'tr',  fmt:'json3'}, {lang:'tr',  fmt:'srv1'},
+    {lang:'en',  fmt:'json3'}, {lang:'en',  fmt:'srv1'},
+    {lang:'',    fmt:'json3'},
+  ];
+  const attempts = combos.map(async ({lang, fmt}) => {
+    const p = new URLSearchParams({v: videoId, fmt});
+    if (lang) p.set('lang', lang);
+    const raw = await proxyFetch(`https://www.youtube.com/api/timedtext?${p}`, 7000);
+    if (!raw || raw.length < 30) throw new Error('empty');
+    const parsed = parseTranscriptRaw(raw, fmt);
+    if (!parsed || parsed.length < 30) throw new Error('short');
+    return parsed;
+  });
+  const result = await Promise.race([
+    Promise.any(attempts).catch(() => null),
+    new Promise(r => setTimeout(() => r(null), 10000)),
+  ]);
+  if (result) addLog('  → Strateji 1 (timedtext) başarılı', 'ok');
+  return result;
 }
 
 function parseTranscriptRaw(raw, fmt) {
@@ -662,11 +691,9 @@ function parseTranscriptRaw(raw, fmt) {
       return j.events.filter(e => e.segs).flatMap(e => e.segs)
         .map(s => s.utf8 || '').join(' ').replace(/\s+/g,' ').trim();
     }
-    // XML (srv1/srv2/srv3/vtt)
     if (raw.includes('<text') || raw.includes('<p ')) {
       return parseTranscriptXml(raw);
     }
-    // VTT
     if (raw.includes('WEBVTT')) {
       return raw.split('\n')
         .filter(l => !l.includes('-->') && !l.startsWith('WEBVTT') && !/^\d+$/.test(l.trim()) && l.trim())
@@ -684,40 +711,6 @@ function parseTranscriptXml(xml) {
     .filter(Boolean).join(' ').replace(/\s+/g,' ').trim();
 }
 
-// Strategy 2 — Watch page scraping
-async function tryWatchPage(videoId) {
-  addLog('  → Strateji 2: YouTube sayfa içeriği inceleniyor...');
-  try {
-    // Hard 12s cap on this whole strategy
-    const html = await Promise.race([
-      proxyFetch(`https://www.youtube.com/watch?v=${videoId}`, 10000),
-      new Promise((_,r) => setTimeout(() => r(new Error('timeout')), 12000)),
-    ]);
-    if (!html || html.length < 1000) return null;
-    const patterns = [
-      /"captionTracks":(\[.*?\])/,
-      /"captionTracks":\s*(\[[\s\S]{5,4000}?\]),\s*"audioTracks"/,
-      /"captionTracks":\s*(\[[\s\S]{5,4000}?\]),\s*"translationLanguages"/,
-    ];
-    let tracks = null;
-    for (const pat of patterns) {
-      const m = html.match(pat);
-      if (m) { try { const t = JSON.parse(m[1]); if (t?.length > 0) { tracks = t; break; } } catch {} }
-    }
-    if (!tracks?.length) return null;
-    const track = tracks.find(t => t.languageCode === 'tr')
-               || tracks.find(t => t.languageCode?.startsWith('tr'))
-               || tracks.find(t => t.languageCode === 'en')
-               || tracks[0];
-    if (!track?.baseUrl) return null;
-    const xml = await proxyFetch(decodeURIComponent(track.baseUrl), 8000);
-    const result = parseTranscriptXml(xml);
-    if (result) addLog('  → Strateji 2 (watch page) başarılı', 'ok');
-    return result;
-  } catch { return null; }
-}
-
-// Strategy 3 — Invidious public API
 async function tryInvidious(videoId) {
   addLog('  → Strateji 3: Invidious API deneniyor...');
   const instances = [
@@ -725,7 +718,6 @@ async function tryInvidious(videoId) {
     'https://invidious.privacyredirect.com',
     'https://yt.artemislena.eu',
   ];
-  // All instances in PARALLEL — first success wins, 10s hard cap
   const attempts = instances.map(async base => {
     const capRaw = await proxyFetch(`${base}/api/v1/captions/${videoId}`, 7000);
     const { captions } = JSON.parse(capRaw);
@@ -884,7 +876,8 @@ async function generate() {
           text = row.manual;
           addLog(`📋 Manuel transkript kullanıldı (${text.length.toLocaleString()} karakter)`, 'ok');
         } else {
-          text = await fetchTranscript(row.vid);
+          // 15 saniye sonra timeout — hiç bekletmez
+          text = await fetchTranscriptWithTimeout(row.vid, 15000);
           addLog(`✓ Transkript alındı: ${text.length.toLocaleString()} karakter`, 'ok');
         }
 
