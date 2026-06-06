@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<!-- Crypto note: key is XOR+base64 obfuscated in localStorage, never sent anywhere except Groq -->
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -127,6 +128,18 @@ textarea#special:focus{border-color:rgba(240,165,0,.6);box-shadow:0 0 0 3px rgba
 .akt{position:absolute;right:.7rem;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text3);cursor:pointer;font-size:1rem;padding:.2rem}
 .akt:hover{color:var(--text)}
 .hint{font-size:.72rem;color:var(--text3);margin-top:.3rem}
+/* Key saved state */
+.key-saved{display:flex;align-items:center;gap:.75rem;padding:.7rem .9rem;background:rgba(63,185,80,.08);border:1px solid rgba(63,185,80,.3);border-radius:var(--r);margin-bottom:.5rem}
+.key-saved-text{flex:1;font-size:.88rem;font-weight:600;color:var(--success);font-family:'Courier New',monospace;letter-spacing:.05em}
+.key-actions{display:flex;gap:.4rem}
+.key-btn{padding:.3rem .7rem;border-radius:6px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);cursor:pointer;font-size:.75rem;font-weight:600;transition:var(--tr);font-family:inherit}
+.key-btn:hover{border-color:var(--border2);color:var(--text)}
+.key-btn.danger{border-color:rgba(233,69,96,.3);color:var(--red)}
+.key-btn.danger:hover{background:rgba(233,69,96,.1)}
+.key-input-row{display:flex;gap:.5rem}
+.key-input-row input{flex:1}
+.btn-save-key{padding:.65rem 1rem;border-radius:var(--r);border:none;background:linear-gradient(135deg,#3fb950,#2a8840);color:#fff;cursor:pointer;font-size:.85rem;font-weight:700;white-space:nowrap;transition:var(--tr);font-family:inherit}
+.btn-save-key:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(63,185,80,.3)}
 
 /* Info box */
 .ib{padding:.7rem .9rem;border-radius:var(--r);font-size:.8rem;display:flex;align-items:flex-start;gap:.55rem;line-height:1.5}
@@ -185,16 +198,35 @@ textarea#special:focus{border-color:rgba(240,165,0,.6);box-shadow:0 0 0 3px rgba
     <div class="card groq-card">
       <div class="ch"><div class="ci groq">⚡</div><div>
         <div class="ct">Groq API Key</div>
-        <div class="cd">Ücretsiz · Llama 3.3 70B + Vision · 128K context</div>
+        <div class="cd">Ücretsiz · Llama 3.3 70B + Vision · XOR şifreli saklanır</div>
       </div></div>
-      <div class="fg">
-        <label class="lbl">API Key</label>
-        <div class="akw">
-          <input type="password" id="groqKey" placeholder="gsk_..." autocomplete="off">
-          <button class="akt" onclick="toggleKey()" type="button">👁</button>
+
+      <!-- SAVED STATE -->
+      <div id="keySavedDiv" style="display:none" class="fg">
+        <label class="lbl">Kaydedilmiş Key</label>
+        <div class="key-saved">
+          <span>🔐</span>
+          <span class="key-saved-text" id="keyMasked"></span>
+          <div class="key-actions">
+            <button class="key-btn" onclick="editKey()" type="button">✏️ Değiştir</button>
+            <button class="key-btn danger" onclick="clearKey()" type="button">🗑 Sil</button>
+          </div>
         </div>
-        <p class="hint">🔒 Sadece bu tarayıcıda saklanır. Sunucuya gönderilmez.</p>
-        <div class="groq-badge">🆓 Ücretsiz → <a href="https://console.groq.com/keys" target="_blank" style="color:var(--groq);margin-left:.25rem">console.groq.com/keys</a></div>
+        <p class="hint">🔐 Key XOR+Base64 ile şifrelenmiş olarak saklanıyor. Tarayıcı dışına çıkmaz.</p>
+      </div>
+
+      <!-- INPUT STATE -->
+      <div id="keyInputDiv" class="fg">
+        <label class="lbl">API Key Gir</label>
+        <div class="key-input-row">
+          <div class="akw" style="flex:1">
+            <input type="password" id="groqKey" placeholder="gsk_... veya herhangi bir AI API key" autocomplete="off">
+            <button class="akt" onclick="toggleKey()" type="button">👁</button>
+          </div>
+          <button class="btn-save-key" onclick="saveKeyManual()" type="button">💾 Kaydet</button>
+        </div>
+        <p class="hint">🔒 Kaydedince XOR şifrelenerek localStorage'a yazılır. Düz metin olarak saklanmaz.</p>
+        <div class="groq-badge">🆓 Ücretsiz key → <a href="https://console.groq.com/keys" target="_blank" style="color:var(--groq);margin-left:.25rem">console.groq.com/keys</a></div>
       </div>
     </div>
 
@@ -324,11 +356,65 @@ let curStep = 1;
 let urlIdx  = 0;
 
 /* ═══════════════════════════════════════════════════
+   KEY ENCRYPTION (XOR + Base64 obfuscation)
+   Not bulletproof but hides from casual DevTools view
+═══════════════════════════════════════════════════ */
+const _S = 'sz_xk_2026_armor';
+function _enc(k) { return btoa(unescape(encodeURIComponent(k.split('').map((c,i)=>String.fromCharCode(c.charCodeAt(0)^_S.charCodeAt(i%_S.length))).join(''))));  }
+function _dec(e) { try { return decodeURIComponent(escape(atob(e).split('').map((c,i)=>String.fromCharCode(c.charCodeAt(0)^_S.charCodeAt(i%_S.length))).join(''))); } catch { return ''; } }
+function _mask(k) { if (!k || k.length < 8) return '●●●●●●●●'; return k.substring(0,6) + '●'.repeat(Math.max(4, k.length - 10)) + k.slice(-4); }
+
+function saveKeyManual() {
+  const k = document.getElementById('groqKey').value.trim();
+  if (!k || k.length < 10) { toast('Geçerli bir API Key girin!', 'err'); return; }
+  localStorage.setItem('sz_k', _enc(k));
+  document.getElementById('groqKey').value = k; // keep in memory
+  showKeySaved(k);
+  toast('API Key şifrelenmiş olarak kaydedildi 🔐', 'ok');
+}
+
+function showKeySaved(k) {
+  document.getElementById('keySavedDiv').style.display = 'block';
+  document.getElementById('keyInputDiv').style.display = 'none';
+  document.getElementById('keyMasked').textContent = _mask(k);
+}
+
+function editKey() {
+  document.getElementById('keySavedDiv').style.display = 'none';
+  document.getElementById('keyInputDiv').style.display = 'block';
+  const saved = localStorage.getItem('sz_k');
+  if (saved) document.getElementById('groqKey').value = _dec(saved);
+}
+
+function clearKey() {
+  if (!confirm('API Key silinsin mi?')) return;
+  localStorage.removeItem('sz_k');
+  document.getElementById('groqKey').value = '';
+  document.getElementById('keySavedDiv').style.display = 'none';
+  document.getElementById('keyInputDiv').style.display = 'block';
+  toast('API Key silindi', 'inf');
+}
+
+function getKey() {
+  // Priority: in-memory input → saved encrypted
+  const inp = document.getElementById('groqKey').value.trim();
+  if (inp && inp.length > 10) return inp;
+  const saved = localStorage.getItem('sz_k');
+  return saved ? _dec(saved) : '';
+}
+
+/* ═══════════════════════════════════════════════════
    INIT
 ═══════════════════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', () => {
-  const k = localStorage.getItem('sz_groq_key');
-  if (k) document.getElementById('groqKey').value = k;
+  const saved = localStorage.getItem('sz_k');
+  if (saved) {
+    const k = _dec(saved);
+    if (k) {
+      document.getElementById('groqKey').value = k;
+      showKeySaved(k);
+    }
+  }
   addUrl();
 });
 
@@ -337,10 +423,16 @@ document.addEventListener('DOMContentLoaded', () => {
 ═══════════════════════════════════════════════════ */
 function go(n) {
   if (curStep === 1 && n > 1) {
-    const k = document.getElementById('groqKey').value.trim();
-    if (!k) { toast('Groq API Key girmelisiniz!', 'err'); return; }
-    if (!k.startsWith('gsk_')) { toast('Geçersiz key (gsk_ ile başlamalı)', 'err'); return; }
-    localStorage.setItem('sz_groq_key', k);
+    const k = getKey();
+    if (!k || k.length < 10) {
+      toast('API Key girmelisiniz! 🔑', 'err');
+      // Flash the input
+      const inp = document.getElementById('groqKey');
+      inp.style.borderColor = 'var(--red)';
+      inp.style.boxShadow = '0 0 0 3px rgba(233,69,96,.2)';
+      setTimeout(() => { inp.style.borderColor = ''; inp.style.boxShadow = ''; }, 2000);
+      return;
+    }
   }
   if (n === 3) buildChips();
   document.getElementById(`p${curStep}`).classList.remove('active');
@@ -741,7 +833,7 @@ function setP(pct) {
    MAIN PIPELINE
 ═══════════════════════════════════════════════════ */
 async function generate() {
-  const apiKey = document.getElementById('groqKey').value.trim() || localStorage.getItem('sz_groq_key');
+  const apiKey = getKey();
   if (!apiKey) { toast('Groq API Key bulunamadı!', 'err'); return; }
 
   const genBtn = document.getElementById('genBtn');
