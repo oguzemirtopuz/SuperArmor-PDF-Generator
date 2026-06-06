@@ -28,17 +28,15 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
              radial-gradient(ellipse at 85% 85%,rgba(233,69,96,.06) 0%,transparent 55%),
              radial-gradient(ellipse at 50% 50%,rgba(15,52,96,.2) 0%,transparent 65%);}
 
-/* ── HEADER ── */
 .hdr{position:relative;z-index:10;padding:2rem 1rem 1.25rem;text-align:center;border-bottom:1px solid var(--border)}
 .badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(245,80,54,.1);border:1px solid rgba(245,80,54,.35);border-radius:100px;padding:.35rem .9rem;font-size:.72rem;font-weight:700;color:var(--groq);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.9rem}
 .app-title{font-size:clamp(1.75rem,5vw,2.6rem);font-weight:900;line-height:1.2;margin-bottom:.45rem;background:linear-gradient(135deg,#fff 0%,#e94560 55%,#f0a500 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .app-sub{color:var(--text2);font-size:.92rem;max-width:520px;margin:0 auto}
 
-/* ── WIZARD ── */
 .wiz{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:2rem 1rem 5rem}
 .steps{display:flex;align-items:center;justify-content:center;margin-bottom:2.5rem}
 .si{display:flex;flex-direction:column;align-items:center}
-.sc{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;border:2px solid var(--border);background:var(--bg2);color:var(--text3);transition:var(--tr);position:relative;z-index:1}
+.sc{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;border:2px solid var(--border);background:var(--bg2);color:var(--text3);transition:var(--tr);z-index:1}
 .sc.active{border-color:var(--red);background:var(--red);color:#fff;box-shadow:0 0 0 4px rgba(233,69,96,.2)}
 .sc.done{border-color:var(--success);background:var(--success);color:#fff}
 .sc.done .sn{display:none}.sc.done::after{content:'✓'}
@@ -48,11 +46,9 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .sconn.done{background:var(--success)}
 @media(max-width:500px){.sl{display:none}.sconn{max-width:40px}}
 
-/* ── PANEL ── */
 .panel{display:none;animation:fi .3s ease}.panel.active{display:block}
 @keyframes fi{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 
-/* ── CARD ── */
 .card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:1.75rem;margin-bottom:1.25rem;transition:var(--tr)}
 .card:hover{border-color:var(--border2)}
 .ch{display:flex;align-items:center;gap:.75rem;margin-bottom:1.25rem}
@@ -62,7 +58,6 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
 .ci.groq{background:rgba(245,80,54,.15)}
 .ct{font-size:1rem;font-weight:700}.cd{font-size:.78rem;color:var(--text2);margin-top:.1rem}
 
-/* ── FORM ── */
 label.lbl{display:block;font-size:.78rem;font-weight:700;color:var(--text2);margin-bottom:.4rem;text-transform:uppercase;letter-spacing:.05em}
 input,select,textarea{width:100%;padding:.7rem .9rem;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-family:inherit;font-size:.9rem;transition:var(--tr);outline:none}
 input:focus,select:focus,textarea:focus{border-color:rgba(233,69,96,.5);box-shadow:0 0 0 3px rgba(233,69,96,.1)}
@@ -71,20 +66,18 @@ textarea{resize:vertical}
 .frow{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
 @media(max-width:580px){.frow{grid-template-columns:1fr}}
 
-/* ── SPECIAL INSTRUCTIONS (prominent) ── */
+/* Special instructions */
 .special-card{border-color:rgba(240,165,0,.25)!important;background:linear-gradient(135deg,var(--bg2) 0%,rgba(240,165,0,.04) 100%)!important}
 .special-card:hover{border-color:rgba(240,165,0,.5)!important}
-.special-label{color:var(--gold)!important}
 textarea#special{border-color:rgba(240,165,0,.3);min-height:120px}
 textarea#special:focus{border-color:rgba(240,165,0,.6);box-shadow:0 0 0 3px rgba(240,165,0,.1)}
 .special-hint{font-size:.75rem;color:var(--warn);margin-top:.4rem;line-height:1.5}
 
-/* ── BUTTONS ── */
+/* Buttons */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;padding:.7rem 1.4rem;border-radius:var(--r);font-family:inherit;font-size:.9rem;font-weight:700;cursor:pointer;border:none;transition:var(--tr)}
 .btn-p{background:linear-gradient(135deg,#e94560,#c73652);color:#fff;box-shadow:0 4px 12px rgba(233,69,96,.3)}
 .btn-p:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(233,69,96,.4)}
 .btn-s{background:linear-gradient(135deg,#1a6b3c,#0d4a28);color:#fff;box-shadow:0 4px 12px rgba(26,107,60,.3)}
-.btn-s:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(26,107,60,.4)}
 .btn-groq{background:linear-gradient(135deg,#f55036,#c73020);color:#fff;box-shadow:0 4px 12px rgba(245,80,54,.3)}
 .btn-groq:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(245,80,54,.4)}
 .btn-g{background:transparent;color:var(--text2);border:1px solid var(--border)}
@@ -94,26 +87,40 @@ textarea#special:focus{border-color:rgba(240,165,0,.6);box-shadow:0 0 0 3px rgba
 .btn-lg{padding:.9rem 2rem;font-size:1rem;border-radius:var(--r2)}
 .bgrp{display:flex;gap:.75rem;justify-content:flex-end;margin-top:1.5rem;flex-wrap:wrap}
 
-/* ── URL LIST ── */
+/* URL rows */
 .url-list{display:flex;flex-direction:column;gap:.6rem}
-.url-row{display:flex;gap:.5rem;align-items:flex-start;flex-direction:column;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:.65rem .75rem;transition:var(--tr)}
-.url-row:hover{border-color:var(--border2)}
+.url-row{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:.65rem .75rem;transition:var(--tr)}
 .url-row.ok{border-color:rgba(63,185,80,.35);background:rgba(63,185,80,.04)}
 .url-row.err{border-color:rgba(233,69,96,.35);background:rgba(233,69,96,.04)}
 .url-row.loading{border-color:rgba(240,165,0,.35)}
 .url-top{display:flex;gap:.5rem;width:100%;align-items:center}
 .url-top input{flex:1;background:transparent;border:none;box-shadow:none;padding:.25rem 0;font-size:.88rem}
-.url-top input:focus{border:none;box-shadow:none}
-.url-st{font-size:.75rem;padding:.15rem 0 0;display:flex;align-items:center;gap:.4rem;min-height:18px}
+.url-top input:focus{border:none;box-shadow:none;outline:none}
+.url-st{font-size:.73rem;padding:.2rem 0 0;display:flex;align-items:center;gap:.4rem;min-height:16px;color:var(--text3)}
 .url-st.ok{color:var(--success)}.url-st.err{color:var(--red)}.url-st.loading{color:var(--gold)}
+/* Per-video manual fallback */
+.url-fallback{margin-top:.5rem;display:none}
+.url-fallback textarea{font-size:.78rem;min-height:60px;border-color:rgba(233,69,96,.3)}
+.url-row.err .url-fallback{display:block}
 .url-rm{width:30px;height:30px;border-radius:7px;border:1px solid var(--border);background:transparent;color:var(--text3);cursor:pointer;font-size:.85rem;display:flex;align-items:center;justify-content:center;transition:var(--tr);flex-shrink:0}
 .url-rm:hover{border-color:var(--red);color:var(--red)}
 
-/* ── SPINNER ── */
+/* Scenario image upload */
+.sen-controls{display:flex;gap:.5rem;align-items:flex-start;margin-bottom:.75rem}
+.sen-controls textarea{flex:1}
+.img-upload-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.3rem;width:80px;min-height:80px;border:2px dashed var(--border);border-radius:var(--r);cursor:pointer;background:var(--bg3);color:var(--text3);font-size:.65rem;text-align:center;transition:var(--tr);flex-shrink:0;position:relative;padding:.4rem}
+.img-upload-btn:hover{border-color:rgba(240,165,0,.5);color:var(--gold)}
+.img-upload-btn input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.img-upload-btn .icon{font-size:1.6rem}
+.img-processing{display:flex;align-items:center;gap:.5rem;font-size:.78rem;color:var(--gold);margin-top:.4rem}
+.sen-preview{margin-top:.5rem;border-radius:var(--r);overflow:hidden;border:1px solid var(--border);max-height:150px;display:none}
+.sen-preview img{width:100%;max-height:150px;object-fit:cover;display:block}
+
+/* Spinner */
 .spin{width:14px;height:14px;border:2px solid rgba(255,255,255,.15);border-top-color:currentColor;border-radius:50%;animation:rot .7s linear infinite;flex-shrink:0;display:inline-block}
 @keyframes rot{to{transform:rotate(360deg)}}
 
-/* ── GROQ CARD ── */
+/* Groq card */
 .groq-card{border-color:rgba(245,80,54,.25)!important;background:linear-gradient(135deg,var(--bg2) 0%,rgba(245,80,54,.04) 100%)!important}
 .groq-badge{display:inline-flex;align-items:center;gap:.4rem;background:rgba(245,80,54,.12);border:1px solid rgba(245,80,54,.3);border-radius:100px;padding:.25rem .7rem;font-size:.7rem;font-weight:700;color:var(--groq);margin-top:.5rem}
 .akw{position:relative}.akw input{padding-right:3rem}
@@ -121,55 +128,50 @@ textarea#special:focus{border-color:rgba(240,165,0,.6);box-shadow:0 0 0 3px rgba
 .akt:hover{color:var(--text)}
 .hint{font-size:.72rem;color:var(--text3);margin-top:.3rem}
 
-/* ── INFO BOX ── */
+/* Info box */
 .ib{padding:.7rem .9rem;border-radius:var(--r);font-size:.8rem;display:flex;align-items:flex-start;gap:.55rem;line-height:1.5}
 .ib.tip{background:rgba(15,52,96,.3);border:1px solid rgba(59,130,246,.2);color:#7ab3ef}
 .ib.warn{background:rgba(240,165,0,.1);border:1px solid rgba(240,165,0,.3);color:var(--gold)}
-.ib.success{background:rgba(63,185,80,.08);border:1px solid rgba(63,185,80,.25);color:var(--success)}
 
-/* ── PROGRESS ── */
+/* Progress */
 .pbar{width:100%;height:6px;background:var(--bg3);border-radius:3px;overflow:hidden;margin:.75rem 0}
 .pfill{height:100%;background:linear-gradient(90deg,var(--groq),var(--gold));border-radius:3px;transition:width .4s ease;width:0%}
 
-/* ── LOG ── */
+/* Log */
 .slog{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:.9rem;font-size:.78rem;font-family:'Courier New',monospace;color:var(--text2);text-align:left;max-height:200px;overflow-y:auto;margin-top:.9rem}
 .ll{display:flex;gap:.5rem;padding:.12rem 0;align-items:flex-start}
 .lt{color:var(--text3);flex-shrink:0}.lok{color:var(--success)}.linf{color:var(--gold)}.lerr{color:var(--red)}
 
-/* ── GENERATE CARD ── */
+/* Generate card */
 .gencard{text-align:center;padding:2.5rem 1.5rem}
 .geni{font-size:3.5rem;margin-bottom:.75rem;display:block}
 .gent{font-size:1.35rem;font-weight:800;margin-bottom:.4rem}
 .gend{color:var(--text2);font-size:.88rem;margin-bottom:1.75rem}
 
-/* ── CHIPS ── */
+/* Chips */
 .chips{display:flex;flex-wrap:wrap;gap:.45rem;margin-bottom:1.25rem}
 .chip{display:flex;align-items:center;gap:.35rem;padding:.3rem .7rem;border-radius:100px;font-size:.75rem;font-weight:600;background:var(--bg3);border:1px solid var(--border);color:var(--text2)}
 .chip.ok{background:rgba(63,185,80,.08);border-color:rgba(63,185,80,.3);color:var(--success)}
 .chip.warn{background:rgba(240,165,0,.08);border-color:rgba(240,165,0,.3);color:var(--gold)}
 
-/* ── TOAST ── */
+/* Toast */
 .toast{position:fixed;bottom:2rem;right:2rem;padding:.9rem 1.4rem;border-radius:var(--r);font-size:.88rem;font-weight:700;z-index:9999;animation:tin .3s ease;max-width:320px;box-shadow:0 4px 20px rgba(0,0,0,.5)}
 @keyframes tin{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
 .toast.ok{background:#1a6b3c;color:#fff}.toast.err{background:#e94560;color:#fff}.toast.inf{background:var(--navy3);color:#fff}
 
-/* ── SCROLLBAR ── */
 ::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:3px}::-webkit-scrollbar-thumb:hover{background:var(--border2)}
+::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:3px}
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
 <header class="hdr">
-  <div class="badge">⚡ Powered by Groq · Llama 3.3 70B</div>
+  <div class="badge">⚡ Powered by Groq · Llama 3.3 70B · Vision</div>
   <h1 class="app-title">Otonom Sınav Hazırlık Sistemi</h1>
-  <p class="app-sub">YouTube videolarını okur · Senaryoya göre analiz eder · Süper Zırhlı PDF üretir</p>
+  <p class="app-sub">YouTube videolarını okur · Senaryoyu anlar · Süper Zırhlı PDF üretir</p>
 </header>
 
 <main class="wiz">
-
-  <!-- STEP INDICATOR -->
   <nav class="steps">
     <div class="si"><div class="sc active" id="sc1"><span class="sn">1</span></div><div class="sl active" id="sl1">Ayarlar</div></div>
     <div class="sconn" id="cn1"></div>
@@ -178,13 +180,12 @@ textarea#special:focus{border-color:rgba(240,165,0,.6);box-shadow:0 0 0 3px rgba
     <div class="si"><div class="sc" id="sc3"><span class="sn">3</span></div><div class="sl" id="sl3">PDF Üret</div></div>
   </nav>
 
-  <!-- ═══ STEP 1: SETTINGS ═══ -->
+  <!-- ═══ STEP 1 ═══ -->
   <div class="panel active" id="p1">
-
     <div class="card groq-card">
       <div class="ch"><div class="ci groq">⚡</div><div>
         <div class="ct">Groq API Key</div>
-        <div class="cd">Ücretsiz · Llama 3.3 70B · 128K context · Saniyede 800 token</div>
+        <div class="cd">Ücretsiz · Llama 3.3 70B + Vision · 128K context</div>
       </div></div>
       <div class="fg">
         <label class="lbl">API Key</label>
@@ -193,7 +194,7 @@ textarea#special:focus{border-color:rgba(240,165,0,.6);box-shadow:0 0 0 3px rgba
           <button class="akt" onclick="toggleKey()" type="button">👁</button>
         </div>
         <p class="hint">🔒 Sadece bu tarayıcıda saklanır. Sunucuya gönderilmez.</p>
-        <div class="groq-badge">🆓 Ücretsiz API Key → <a href="https://console.groq.com/keys" target="_blank" style="color:var(--groq);margin-left:.25rem">console.groq.com/keys</a></div>
+        <div class="groq-badge">🆓 Ücretsiz → <a href="https://console.groq.com/keys" target="_blank" style="color:var(--groq);margin-left:.25rem">console.groq.com/keys</a></div>
       </div>
     </div>
 
@@ -229,60 +230,63 @@ textarea#special:focus{border-color:rgba(240,165,0,.6);box-shadow:0 0 0 3px rgba
         </div>
       </div>
       <div class="frow">
-        <div class="fg">
-          <label class="lbl">Dönem</label>
-          <select id="donem"><option value="1">1. Dönem</option><option value="2">2. Dönem</option></select>
-        </div>
-        <div class="fg">
-          <label class="lbl">Yazılı No</label>
-          <select id="yazili"><option value="1">1. Yazılı</option><option value="2">2. Yazılı</option><option value="3">3. Yazılı</option></select>
-        </div>
+        <div class="fg"><label class="lbl">Dönem</label>
+          <select id="donem"><option value="1">1. Dönem</option><option value="2">2. Dönem</option></select></div>
+        <div class="fg"><label class="lbl">Yazılı No</label>
+          <select id="yazili"><option value="1">1. Yazılı</option><option value="2">2. Yazılı</option><option value="3">3. Yazılı</option></select></div>
       </div>
     </div>
-
     <div class="bgrp"><button class="btn btn-p btn-lg" onclick="go(2)">Devam Et →</button></div>
   </div>
 
-  <!-- ═══ STEP 2: CONTENT ═══ -->
+  <!-- ═══ STEP 2 ═══ -->
   <div class="panel" id="p2">
 
     <!-- YouTube URLs -->
     <div class="card">
       <div class="ch"><div class="ci r">▶️</div><div>
         <div class="ct">YouTube Videoları</div>
-        <div class="cd">Sistem transkripti otomatik çeker — CC (altyazı) açık olmalı</div>
+        <div class="cd">Transkript otomatik çekilir (3 farklı yöntem denenir)</div>
       </div></div>
       <div class="ib tip" style="margin-bottom:.9rem">
         <span>💡</span>
-        <span>Videoların üstünde CC (kapalı altyazı) simgesi varsa transkript otomatik çekilir. Türkçe altyazı önce, sonra İngilizce, sonra otomatik oluşturulan altyazı denenir.</span>
+        <span>Videonun CC (kapalı altyazı) simgesi yoksa bile YouTube'un otomatik oluşturduğu transkript çekilir. Hiç çekilemezse videonun altında yapıştır alanı açılır.</span>
       </div>
       <div class="url-list" id="urlList"></div>
       <button class="btn btn-g" onclick="addUrl()" type="button" style="margin-top:.65rem;font-size:.83rem">+ Video Ekle</button>
     </div>
 
-    <!-- Scenario -->
+    <!-- Scenario with image upload -->
     <div class="card">
       <div class="ch"><div class="ci g">📋</div><div>
         <div class="ct">MEB Senaryosu</div>
-        <div class="cd">Hocanın gönderdiği sınav senaryosunu buraya yaz veya yapıştır</div>
+        <div class="cd">Yaz veya fotoğraf yükle → Groq Vision otomatik okur</div>
       </div></div>
-      <div class="fg">
-        <label class="lbl">Senaryo Metni</label>
-        <textarea id="senaryo" rows="7" placeholder="Örnek:&#10;FİZ.9.1.1 — Kuvvet ve Hareket — 3 soru&#10;FİZ.9.1.2 — Newton'un Hareket Yasaları — 2 soru&#10;FİZ.9.2.1 — Enerji ve Momentum — 2 soru&#10;&#10;Veya WhatsApp'tan kopyaladığın ham tabloyu buraya yapıştırabilirsin."></textarea>
+      <div class="sen-controls">
+        <textarea id="senaryo" rows="8" placeholder="Örnek:&#10;FİZ.9.1.1 — Kuvvet ve Hareket — 3 soru&#10;FİZ.9.1.2 — Newton Yasaları — 2 soru&#10;&#10;Veya sağdaki kamera ikonuna tıklayıp fotoğraf yükle →&#10;Groq Vision senaryoyu otomatik okur."></textarea>
+        <label class="img-upload-btn" title="Senaryo fotoğrafı yükle — Groq Vision okur">
+          <input type="file" accept="image/*" onchange="onSenarioImg(event)" id="senImgInput">
+          <span class="icon">📷</span>
+          <span>Görsel<br>Yükle</span>
+        </label>
       </div>
+      <div id="senImgProcessing" class="img-processing" style="display:none">
+        <span class="spin"></span> <span id="senImgTxt">Groq Vision senaryoyu okuyor...</span>
+      </div>
+      <div id="senPreview" class="sen-preview"><img id="senPreviewImg" src="" alt="Senaryo görseli"></div>
     </div>
 
-    <!-- Special Instructions — PROMINENT -->
+    <!-- Special Instructions -->
     <div class="card special-card">
       <div class="ch"><div class="ci gold">⚡</div><div>
         <div class="ct" style="color:var(--gold)">Özel Talimatlar</div>
         <div class="cd">AI bu alana en yüksek önceliği verir — her şeyi override eder</div>
       </div></div>
       <div class="fg">
-        <label class="lbl special-label">Talimatlarını Yaz</label>
-        <textarea id="special" rows="5" placeholder="Senaryo istisnalarını da buraya yaz:&#10;• 'FİZ.9.1.1 için senaryoda 2 yazıyor ama hoca üstüne 3 yazdı, 3 yap'&#10;• 'Newton yasalarına daha fazla ağırlık ver'&#10;• 'Termodinamik konusunu kesinlikle atlama'&#10;• 'Açık uçlu soru formatına dikkat et'"></textarea>
+        <label class="lbl" style="color:var(--gold)">Talimatlarını Yaz</label>
+        <textarea id="special" rows="5" placeholder="Senaryo istisnalarını da buraya yaz:&#10;• 'FİZ.9.1.1 için senaryoda 2 yazıyor ama hoca üstüne 3 yazdı, 3 yap'&#10;• 'Newton yasalarına daha fazla ağırlık ver'&#10;• 'Açık uçlu soru formatına dikkat et'&#10;• 'Termodinamik konusunu kesinlikle atlama'"></textarea>
       </div>
-      <p class="special-hint">⚠️ Senaryo ile gerçek arasındaki farkları, hocanın özel vurgularını ve istisnalar mutlaka buraya yaz. AI bu alanı en yüksek öncelikle işler.</p>
+      <p class="special-hint">⚠️ Hocanın son dakika değişikliklerini, özel vurgularını ve senaryo istisnalarını mutlaka buraya yaz.</p>
     </div>
 
     <div class="bgrp">
@@ -291,13 +295,12 @@ textarea#special:focus{border-color:rgba(240,165,0,.6);box-shadow:0 0 0 3px rgba
     </div>
   </div>
 
-  <!-- ═══ STEP 3: GENERATE ═══ -->
+  <!-- ═══ STEP 3 ═══ -->
   <div class="panel" id="p3">
     <div class="card">
       <div class="ch"><div class="ci r">📄</div><div><div class="ct">Hazırlık Özeti</div><div class="cd">Kontrol et, ardından üret</div></div></div>
       <div class="chips" id="chips"></div>
     </div>
-
     <div class="card gencard">
       <span class="geni" id="geni">🛡️</span>
       <div class="gent" id="gent">Hazır mısın?</div>
@@ -306,52 +309,47 @@ textarea#special:focus{border-color:rgba(240,165,0,.6);box-shadow:0 0 0 3px rgba
       <div class="pbar" id="pbar" style="display:none"><div class="pfill" id="pfill"></div></div>
       <div class="slog" id="slog" style="display:none"></div>
     </div>
-
     <div class="bgrp">
       <button class="btn btn-g" onclick="go(2)" type="button">← Geri</button>
       <button class="btn btn-sec" id="retryBtn" style="display:none" onclick="generate()" type="button">🔄 Tekrar Dene</button>
     </div>
   </div>
-
 </main>
 
 <script>
-/* ═══════════════════════════════════════════════════════
+/* ═══════════════════════════════════════════════════
    STATE
-═══════════════════════════════════════════════════════ */
+═══════════════════════════════════════════════════ */
 let curStep = 1;
-const transcripts = {}; // videoId → text
+let urlIdx  = 0;
 
-/* ═══════════════════════════════════════════════════════
+/* ═══════════════════════════════════════════════════
    INIT
-═══════════════════════════════════════════════════════ */
+═══════════════════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', () => {
-  const key = localStorage.getItem('sz_groq_key');
-  if (key) document.getElementById('groqKey').value = key;
+  const k = localStorage.getItem('sz_groq_key');
+  if (k) document.getElementById('groqKey').value = k;
   addUrl();
 });
 
-/* ═══════════════════════════════════════════════════════
-   NAVIGATION
-═══════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════
+   NAV
+═══════════════════════════════════════════════════ */
 function go(n) {
   if (curStep === 1 && n > 1) {
     const k = document.getElementById('groqKey').value.trim();
     if (!k) { toast('Groq API Key girmelisiniz!', 'err'); return; }
-    if (!k.startsWith('gsk_')) { toast('Geçersiz Groq API Key (gsk_ ile başlamalı)', 'err'); return; }
+    if (!k.startsWith('gsk_')) { toast('Geçersiz key (gsk_ ile başlamalı)', 'err'); return; }
     localStorage.setItem('sz_groq_key', k);
   }
   if (n === 3) buildChips();
-
   document.getElementById(`p${curStep}`).classList.remove('active');
   curStep = n;
   document.getElementById(`p${curStep}`).classList.add('active');
-
   for (let i = 1; i <= 3; i++) {
     const sc = document.getElementById(`sc${i}`);
     const sl = document.getElementById(`sl${i}`);
-    sc.classList.remove('active','done');
-    sl.classList.remove('active','done');
+    sc.classList.remove('active','done'); sl.classList.remove('active','done');
     if (i < curStep)       { sc.classList.add('done');   sl.classList.add('done'); }
     else if (i === curStep){ sc.classList.add('active'); sl.classList.add('active'); }
     if (i < 3) document.getElementById(`cn${i}`).classList.toggle('done', i < curStep);
@@ -364,43 +362,35 @@ function toggleKey() {
   i.type = i.type === 'password' ? 'text' : 'password';
 }
 
-/* ═══════════════════════════════════════════════════════
+/* ═══════════════════════════════════════════════════
    URL LIST
-═══════════════════════════════════════════════════════ */
-let urlIdx = 0;
+═══════════════════════════════════════════════════ */
 function addUrl() {
   const idx = urlIdx++;
   const list = document.getElementById('urlList');
   const row = document.createElement('div');
-  row.className = 'url-row';
-  row.id = `urow${idx}`;
+  row.className = 'url-row'; row.id = `urow${idx}`;
   row.innerHTML = `
     <div class="url-top">
-      <input type="url" id="uinp${idx}" placeholder="https://www.youtube.com/watch?v=..." onblur="onUrlBlur(${idx})">
+      <input type="url" id="uinp${idx}" placeholder="https://www.youtube.com/watch?v=...">
       <button class="url-rm" onclick="rmUrl(${idx})" type="button">✕</button>
     </div>
-    <div class="url-st" id="ust${idx}"></div>`;
+    <div class="url-st" id="ust${idx}"></div>
+    <div class="url-fallback" id="ufall${idx}">
+      <label class="lbl" style="color:var(--red);margin-top:.3rem">Transkript çekilemedi — Manuel yapıştır:</label>
+      <textarea id="uman${idx}" rows="3" placeholder="Video transkriptini buraya yapıştır..."></textarea>
+    </div>`;
   list.appendChild(row);
 }
 
 function rmUrl(idx) {
   document.getElementById(`urow${idx}`)?.remove();
-  delete transcripts[`row${idx}`];
-}
-
-function onUrlBlur(idx) {
-  const val = document.getElementById(`uinp${idx}`)?.value.trim();
-  if (!val) return;
-  const vid = getVideoId(val);
-  if (!vid) { setUrlSt(idx, 'err', '⚠ Geçersiz YouTube URL'); return; }
-  // Don't auto-fetch here — fetch happens at generate time
-  setUrlSt(idx, '', '');
 }
 
 function setUrlSt(idx, type, msg) {
-  const el = document.getElementById(`ust${idx}`);
+  const el  = document.getElementById(`ust${idx}`);
   const row = document.getElementById(`urow${idx}`);
-  if (!el) return;
+  if (!el || !row) return;
   el.className = `url-st ${type}`;
   el.innerHTML = msg;
   row.className = `url-row ${type}`;
@@ -409,16 +399,87 @@ function setUrlSt(idx, type, msg) {
 function getUrlRows() {
   return [...document.querySelectorAll('.url-row')]
     .map(r => {
-      const inp = r.querySelector('input');
-      const idx = r.id.replace('urow','');
-      return { idx, url: inp?.value.trim() || '', vid: getVideoId(inp?.value.trim() || '') };
+      const idx  = r.id.replace('urow','');
+      const url  = document.getElementById(`uinp${idx}`)?.value.trim() || '';
+      const vid  = getVideoId(url);
+      const manual = document.getElementById(`uman${idx}`)?.value.trim() || '';
+      return { idx, url, vid, manual };
     })
-    .filter(r => r.url && r.vid);
+    .filter(r => r.url);
 }
 
-/* ═══════════════════════════════════════════════════════
-   YOUTUBE TRANSCRIPT ENGINE
-═══════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════
+   SCENARIO IMAGE — GROQ VISION
+═══════════════════════════════════════════════════ */
+async function onSenarioImg(event) {
+  const file = event.target.files?.[0];
+  if (!file) return;
+
+  // Preview
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    document.getElementById('senPreviewImg').src = e.target.result;
+    document.getElementById('senPreview').style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+
+  const apiKey = document.getElementById('groqKey').value.trim() || localStorage.getItem('sz_groq_key');
+  if (!apiKey) { toast('Groq API Key girmelisiniz (Adım 1)', 'err'); return; }
+
+  const proc = document.getElementById('senImgProcessing');
+  const procTxt = document.getElementById('senImgTxt');
+  proc.style.display = 'flex';
+  procTxt.textContent = 'Groq Vision senaryoyu okuyor...';
+
+  try {
+    const b64 = await fileToBase64(file);
+    const mime = file.type || 'image/jpeg';
+    const result = await callGroqVision(b64, mime, apiKey);
+    document.getElementById('senaryo').value = result;
+    proc.style.display = 'none';
+    toast('Senaryo görselden okundu ✓', 'ok');
+  } catch (err) {
+    procTxt.textContent = `Hata: ${err.message}`;
+    procTxt.style.color = 'var(--red)';
+    toast('Görsel okuma başarısız', 'err');
+  }
+}
+
+function fileToBase64(file) {
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload  = (e) => res(e.target.result.split(',')[1]);
+    r.onerror = rej;
+    r.readAsDataURL(file);
+  });
+}
+
+async function callGroqVision(b64, mime, apiKey) {
+  const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+    body: JSON.stringify({
+      model: 'meta-llama/llama-4-scout-17b-16e-instruct',
+      messages: [{
+        role: 'user',
+        content: [
+          { type: 'image_url', image_url: { url: `data:${mime};base64,${b64}` } },
+          { type: 'text', text: 'Bu MEB sınav senaryosu tablosunu oku. Her satırı şu formatta yaz:\n[Kazanım Kodu (varsa)] — [Konu/Kazanım Açıklaması] — [Soru Sayısı] soru\n\nEğer kod yoksa: [Konu Adı] — [Soru Sayısı] soru\nTüm satırları yaz, başka açıklama ekleme.' }
+        ]
+      }],
+      max_tokens: 1200,
+    })
+  });
+  if (!res.ok) {
+    const e = await res.json().catch(() => ({}));
+    throw new Error(e.error?.message || `HTTP ${res.status}`);
+  }
+  return (await res.json()).choices[0].message.content;
+}
+
+/* ═══════════════════════════════════════════════════
+   YOUTUBE TRANSCRIPT ENGINE — 3 STRATEGIES
+═══════════════════════════════════════════════════ */
 function getVideoId(url) {
   try {
     if (!url) return null;
@@ -426,121 +487,187 @@ function getVideoId(url) {
     if (u.hostname.includes('youtu.be')) return u.pathname.slice(1).split('?')[0] || null;
     return u.searchParams.get('v') || null;
   } catch {
-    const m = url.match(/(?:v=|youtu\.be\/)([^&?\s]{8,15})/);
+    const m = url.match(/(?:v=|youtu\.be\/)([^&?\s]{6,15})/);
     return m ? m[1] : null;
   }
 }
 
-// Multiple CORS proxies — tried in order
 const PROXIES = [
   u => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
   u => `https://corsproxy.io/?${encodeURIComponent(u)}`,
   u => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}`,
 ];
 
-async function proxyFetch(url, timeout = 18000) {
-  for (const mkProxy of PROXIES) {
+async function proxyFetch(url, timeout = 15000) {
+  for (const mk of PROXIES) {
     try {
       const ctrl = new AbortController();
-      const tid = setTimeout(() => ctrl.abort(), timeout);
-      const res = await fetch(mkProxy(url), { signal: ctrl.signal });
+      const tid  = setTimeout(() => ctrl.abort(), timeout);
+      const res  = await fetch(mk(url), { signal: ctrl.signal });
       clearTimeout(tid);
       if (res.ok) return await res.text();
-    } catch { /* try next proxy */ }
+    } catch {}
   }
-  throw new Error('Proxy bağlantısı kurulamadı');
+  throw new Error('Proxy bağlantısı başarısız');
 }
 
 async function fetchTranscript(videoId) {
-  // 1. Fetch YouTube watch page
-  const html = await proxyFetch(`https://www.youtube.com/watch?v=${videoId}`);
+  // ── Strategy 1: Direct YouTube Timedtext API ──────────────────────
+  const s1 = await tryTimedtext(videoId);
+  if (s1) return s1;
 
-  // 2. Extract caption tracks — try multiple patterns
-  let tracks = null;
+  // ── Strategy 2: Parse YouTube Watch Page ──────────────────────────
+  const s2 = await tryWatchPage(videoId);
+  if (s2) return s2;
 
-  const patterns = [
-    /"captionTracks":(\[.*?\])/,
-    /"captionTracks":\s*(\[[\s\S]{10,3000}?\])\s*,\s*"/,
-  ];
-  for (const pat of patterns) {
-    const m = html.match(pat);
-    if (m) {
-      try { tracks = JSON.parse(m[1]); break; } catch {}
-    }
-  }
+  // ── Strategy 3: Invidious Open API ───────────────────────────────
+  const s3 = await tryInvidious(videoId);
+  if (s3) return s3;
 
-  if (!tracks || tracks.length === 0)
-    throw new Error('Bu videoda altyazı bulunamadı. Videoda CC (kapalı altyazı) açık olmalı.');
-
-  // 3. Pick best track: Turkish manual > Turkish auto > English > anything
-  const pick = (pred) => tracks.find(pred);
-  const track =
-    pick(t => t.languageCode === 'tr' && t.kind !== 'asr') ||
-    pick(t => t.languageCode === 'tr') ||
-    pick(t => t.languageCode?.startsWith('tr')) ||
-    pick(t => t.languageCode === 'en' && t.kind !== 'asr') ||
-    pick(t => t.languageCode === 'en') ||
-    tracks[0];
-
-  if (!track?.baseUrl)
-    throw new Error('Altyazı URL\'si bulunamadı');
-
-  // 4. Fetch transcript XML
-  const xml = await proxyFetch(decodeURIComponent(track.baseUrl));
-
-  // 5. Parse XML → plain text
-  const doc = new DOMParser().parseFromString(xml, 'text/xml');
-  const div = document.createElement('div');
-  const text = [...doc.querySelectorAll('text')]
-    .map(el => {
-      div.innerHTML = el.textContent;
-      return div.textContent.trim();
-    })
-    .filter(Boolean)
-    .join(' ')
-    .replace(/\s+/g, ' ')
-    .trim();
-
-  if (text.length < 30)
-    throw new Error('Transkript çok kısa veya boş geldi');
-
-  return text;
+  throw new Error('Transkript çekilemedi (3 yöntem denendi)');
 }
 
-/* ═══════════════════════════════════════════════════════
+// Strategy 1 — Direct YouTube /api/timedtext with multiple lang/format combos
+async function tryTimedtext(videoId) {
+  const langs = ['tr', 'tr-TR', 'en', 'en-US', ''];
+  const fmts  = ['json3', 'srv3', 'srv2', 'srv1'];
+  for (const lang of langs) {
+    for (const fmt of fmts) {
+      try {
+        const params = new URLSearchParams({ v: videoId, fmt });
+        if (lang) params.set('lang', lang);
+        // Also try asr (auto-generated)
+        const url = `https://www.youtube.com/api/timedtext?${params}`;
+        const raw = await proxyFetch(url, 9000);
+        if (!raw || raw.length < 30) continue;
+        const parsed = parseTranscriptRaw(raw, fmt);
+        if (parsed && parsed.length > 30) return parsed;
+      } catch {}
+    }
+  }
+  return null;
+}
+
+function parseTranscriptRaw(raw, fmt) {
+  try {
+    if (fmt === 'json3') {
+      const j = JSON.parse(raw);
+      if (!j.events?.length) return null;
+      return j.events.filter(e => e.segs).flatMap(e => e.segs)
+        .map(s => s.utf8 || '').join(' ').replace(/\s+/g,' ').trim();
+    }
+    // XML (srv1/srv2/srv3/vtt)
+    if (raw.includes('<text') || raw.includes('<p ')) {
+      return parseTranscriptXml(raw);
+    }
+    // VTT
+    if (raw.includes('WEBVTT')) {
+      return raw.split('\n')
+        .filter(l => !l.includes('-->') && !l.startsWith('WEBVTT') && !/^\d+$/.test(l.trim()) && l.trim())
+        .join(' ').replace(/<[^>]+>/g,'').replace(/\s+/g,' ').trim();
+    }
+  } catch {}
+  return null;
+}
+
+function parseTranscriptXml(xml) {
+  const doc = new DOMParser().parseFromString(xml, 'text/xml');
+  const div = document.createElement('div');
+  return [...doc.querySelectorAll('text, p')]
+    .map(el => { div.innerHTML = el.textContent; return div.textContent.trim(); })
+    .filter(Boolean).join(' ').replace(/\s+/g,' ').trim();
+}
+
+// Strategy 2 — Watch page scraping
+async function tryWatchPage(videoId) {
+  try {
+    const html = await proxyFetch(`https://www.youtube.com/watch?v=${videoId}`, 18000);
+    if (!html || html.length < 1000) return null;
+
+    // Multiple patterns for captionTracks
+    const patterns = [
+      /"captionTracks":(\[.*?\])/,
+      /"captionTracks":\s*(\[[\s\S]{5,4000}?\]),\s*"audioTracks"/,
+      /"captionTracks":\s*(\[[\s\S]{5,4000}?\]),\s*"translationLanguages"/,
+      /"captionTracks":\s*(\[[\s\S]{5,4000}?\]),\s*"defaultAudioTrackIndex"/,
+    ];
+
+    let tracks = null;
+    for (const pat of patterns) {
+      const m = html.match(pat);
+      if (m) {
+        try { const t = JSON.parse(m[1]); if (t?.length > 0) { tracks = t; break; } } catch {}
+      }
+    }
+    if (!tracks?.length) return null;
+
+    const track = tracks.find(t => t.languageCode === 'tr')
+               || tracks.find(t => t.languageCode?.startsWith('tr'))
+               || tracks.find(t => t.languageCode === 'en')
+               || tracks[0];
+
+    if (!track?.baseUrl) return null;
+
+    const xml = await proxyFetch(decodeURIComponent(track.baseUrl), 12000);
+    return parseTranscriptXml(xml);
+  } catch { return null; }
+}
+
+// Strategy 3 — Invidious public API
+async function tryInvidious(videoId) {
+  const instances = [
+    'https://iv.datura.network',
+    'https://invidious.privacyredirect.com',
+    'https://yt.artemislena.eu',
+    'https://invidious.nerdvpn.de',
+  ];
+  for (const base of instances) {
+    try {
+      const capRaw = await proxyFetch(`${base}/api/v1/captions/${videoId}`, 10000);
+      const { captions } = JSON.parse(capRaw);
+      if (!captions?.length) continue;
+
+      const track = captions.find(c => c.language_code === 'tr')
+                 || captions.find(c => c.language_code?.startsWith('tr'))
+                 || captions.find(c => c.language_code === 'en')
+                 || captions[0];
+      if (!track?.url) continue;
+
+      const content = await proxyFetch(`${base}${track.url}`, 10000);
+      const parsed  = parseTranscriptRaw(content, content.includes('WEBVTT') ? 'vtt' : 'srv1');
+      if (parsed && parsed.length > 30) return parsed;
+    } catch {}
+  }
+  return null;
+}
+
+/* ═══════════════════════════════════════════════════
    GROQ API
-═══════════════════════════════════════════════════════ */
+═══════════════════════════════════════════════════ */
 async function callGroq(prompt, apiKey) {
   const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${apiKey}`,
-    },
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
     body: JSON.stringify({
       model: 'llama-3.3-70b-versatile',
       messages: [
-        {
-          role: 'system',
-          content: 'Sen bir Türk lise sınav hazırlık uzmanısın. Her zaman eksiksiz, geçerli JSON döndür. JSON dışında hiçbir şey yazma.'
-        },
+        { role: 'system', content: 'Sen bir Türk lise sınav hazırlık uzmanısın. Her zaman eksiksiz, geçerli JSON döndür. JSON dışında hiçbir şey yazma.' },
         { role: 'user', content: prompt }
       ],
       max_tokens: 8000,
       temperature: 0.6,
-    }),
+    })
   });
-
   if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.error?.message || `Groq HTTP ${res.status}`);
+    const e = await res.json().catch(() => ({}));
+    throw new Error(e.error?.message || `Groq HTTP ${res.status}`);
   }
   return (await res.json()).choices[0].message.content;
 }
 
-/* ═══════════════════════════════════════════════════════
+/* ═══════════════════════════════════════════════════
    PROMPT BUILDER
-═══════════════════════════════════════════════════════ */
+═══════════════════════════════════════════════════ */
 function buildPrompt(transcriptData) {
   const ders    = document.getElementById('ders').value;
   const sinif   = document.getElementById('sinif').value;
@@ -549,429 +676,337 @@ function buildPrompt(transcriptData) {
   const senaryo = document.getElementById('senaryo').value.trim();
   const special = document.getElementById('special').value.trim();
 
-  const trBlock = transcriptData.map((t, i) =>
-    `--- VİDEO ${i + 1} TRANSKRİPTİ (${t.chars} karakter) ---\n${t.text.substring(0, 10000)}`
-  ).join('\n\n');
+  const trBlock = transcriptData.length > 0
+    ? transcriptData.map((t, i) =>
+        `--- VİDEO ${i + 1} (${t.chars.toLocaleString()} karakter) ---\n${t.text.substring(0, 10000)}`
+      ).join('\n\n')
+    : null;
 
-  return `Sen bir ${ders} sınav hazırlık uzmanısın. ${sinif}. sınıf ${donem}. dönem ${yazili}. yazılısı için eksiksiz bir "Süper Zırhlı" sınav notu hazırla.
+  return `Sen bir ${ders} sınav hazırlık uzmanısın. ${sinif}. sınıf ${donem}. dönem ${yazili}. yazılısı için eksiksiz "Süper Zırhlı" sınav notu hazırla.
 
 DERS: ${ders} | SINIF: ${sinif} | DÖNEM: ${donem} | YAZILI: ${yazili}
 
-${trBlock ? `═══════════════════════════
-YOUTUBE VIDEO TRANSKRİPTLERİ
-(Bu kaynaklardaki bilgileri derin analiz et, kavramları, formülleri ve konuları çıkar)
-═══════════════════════════
-${trBlock}
+${trBlock ? `═══ YOUTUBE VIDEO TRANSKRİPTLERİ (Derin analiz et — kavramları, formülleri, konuları çıkar) ═══\n${trBlock}\n` : ''}
+═══ MEB SINAV SENARYOSU (soru dağılımına KESİNLİKLE UY) ═══
+${senaryo || 'Senaryo girilmedi — konuları transkriptten belirle'}
 
-` : ''}═══════════════════════════
-MEB SINAV SENARYOSU
-(Soru dağılımına KESİNLİKLE uy — kaç sorudan kaç soru çıkacağı buradadır)
-═══════════════════════════
-${senaryo || 'Senaryo girilmedi — konuları kendin belirle'}
+${special ? `═══ ÖZEL TALİMATLAR (EN YÜKSEK ÖNCELİK — üstteki her şeyi override eder) ═══\n${special}\n` : ''}
 
-${special ? `═══════════════════════════
-ÖZEL TALİMATLAR ← EN YÜKSEK ÖNCELİK (üstteki her şeyi override eder)
-═══════════════════════════
-${special}
-
-` : ''}GÖREVLER:
-1. Her kazanım/konu için kavramlar, formüller ve anahtar terimler
-2. "Bunu bilmezsen soruyu çözemezsin" türünden kritik bilgiler
-3. Senaryodaki soru sayısına göre senaryo uyumlu sorular + adım adım çözümler
-4. 85+ puan tuzakları (hocaların puan kırdığı ince noktalar)
-5. "Hoca bunu nasıl sorar?" refleks stratejisi
-6. Sınava 30 dakika kala bakılacak hızlı tekrar tablosu
+GÖREVLER: Kavramlar+formüller → Kritik bilgiler → Senaryo uyumlu sorular+adım adım çözüm → 85+ tuzakları → Refleks stratejisi → Hızlı tekrar tablosu.
 
 KURALLAR:
-- SADECE JSON döndür. JSON öncesinde veya sonrasında HİÇBİR AÇIKLAMA YAZMA.
-- Türkçe bilimsel terimler kullan.
-- Formülleri açık metin yaz: "F = m × a", "v² = v₀² + 2as"
+- SADECE JSON. JSON öncesinde/sonrasında HİÇ yazma.
+- Türkçe bilimsel terimler. Formüller açık metin: "F = m × a"
 - Her bolum senaryo soru sayısı kadar soru içermeli.
-- Çözüm adımları net ve öğrenci seviyesine uygun olmalı.
 
-JSON ŞEMASI (bu yapıya tam uy):
-{
-  "ders": "${ders}",
-  "sinif": "${sinif}",
-  "donem": "${donem}",
-  "yazili_no": "${yazili}",
-  "bolumler": [
-    {
-      "kazanim_kodu": "FİZ.9.1.1",
-      "baslik": "Konu Başlığı",
-      "kavramlar": [{"terim": "...", "tanim": "..."}],
-      "formuller": [{"isim": "...", "formul": "...", "aciklama": "..."}],
-      "kritik_bilgiler": ["...", "..."],
-      "sorular": [
-        {
-          "soru_no": 1,
-          "soru": "Soru metni...",
-          "cozum_adimlari": ["1. Adım: ...", "2. Adım: ...", "Sonuç: ..."]
-        }
-      ],
-      "tuzak": "85+ Tuzak: hocaların puan kırdığı kritik nokta...",
-      "refleks": "Hoca bunu nasıl sorar: ... | Refleks cevap: ..."
-    }
-  ],
-  "hizli_tekrar": [
-    {"kavram": "...", "formul_veya_kural": "...", "kritik_not": "..."}
-  ],
-  "son_dakika": ["...", "..."]
-}`;
+JSON ŞEMASI:
+{"ders":"${ders}","sinif":"${sinif}","donem":"${donem}","yazili_no":"${yazili}","bolumler":[{"kazanim_kodu":"FİZ.9.1.1","baslik":"Konu","kavramlar":[{"terim":"","tanim":""}],"formuller":[{"isim":"","formul":"","aciklama":""}],"kritik_bilgiler":[""],"sorular":[{"soru_no":1,"soru":"","cozum_adimlari":[""]}],"tuzak":"85+ Tuzak: ...","refleks":"Hoca bunu nasıl sorar: ... | Refleks: ..."}],"hizli_tekrar":[{"kavram":"","formul_veya_kural":"","kritik_not":""}],"son_dakika":[""]}`;
 }
 
-/* ═══════════════════════════════════════════════════════
-   SUMMARY CHIPS
-═══════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════
+   CHIPS
+═══════════════════════════════════════════════════ */
 function buildChips() {
   const ders    = document.getElementById('ders').value;
   const senaryo = document.getElementById('senaryo').value.trim();
   const special = document.getElementById('special').value.trim();
-  const urls    = getUrlRows();
-
+  const urls    = getUrlRows().filter(r => r.vid);
   document.getElementById('chips').innerHTML = [
     { label: ders, ok: true, icon: '📚' },
-    { label: 'Groq API (Llama 3.3)', ok: true, icon: '⚡' },
-    { label: `${urls.length} YouTube Videosu`, ok: urls.length > 0, warn: urls.length === 0, icon: '▶️' },
-    { label: senaryo ? `Senaryo girildi` : 'Senaryo yok', ok: !!senaryo, warn: !senaryo, icon: '📋' },
+    { label: 'Groq Llama 3.3 70B', ok: true, icon: '⚡' },
+    { label: `${urls.length > 0 ? urls.length + ' YouTube Videosu' : 'Video yok'}`, ok: urls.length > 0, warn: urls.length === 0, icon: '▶️' },
+    { label: senaryo ? 'Senaryo girildi' : 'Senaryo yok', ok: !!senaryo, warn: !senaryo, icon: '📋' },
     { label: special ? 'Özel talimat var' : 'Talimat yok', ok: !!special, icon: '⚡' },
-  ].map(c => `<div class="chip ${c.ok ? 'ok' : c.warn ? 'warn' : ''}">${c.icon} ${c.label}</div>`).join('');
+  ].map(c => `<div class="chip ${c.ok?'ok':c.warn?'warn':''}">${c.icon} ${c.label}</div>`).join('');
 }
 
-/* ═══════════════════════════════════════════════════════
+/* ═══════════════════════════════════════════════════
    LOG & PROGRESS
-═══════════════════════════════════════════════════════ */
-function addLog(msg, type = 'inf') {
+═══════════════════════════════════════════════════ */
+function addLog(msg, type='inf') {
   const el = document.getElementById('slog');
   el.style.display = 'block';
   const t = new Date().toLocaleTimeString('tr-TR');
-  const icons = { inf: '›', ok: '✓', err: '✗' };
   const d = document.createElement('div');
   d.className = `ll l${type}`;
-  d.innerHTML = `<span class="lt">[${t}]</span> <span>${icons[type]} ${msg}</span>`;
-  el.appendChild(d);
-  el.scrollTop = el.scrollHeight;
+  d.innerHTML = `<span class="lt">[${t}]</span> <span>${{inf:'›',ok:'✓',err:'✗'}[type]||'›'} ${msg}</span>`;
+  el.appendChild(d); el.scrollTop = el.scrollHeight;
 }
 function setP(pct) {
   document.getElementById('pbar').style.display = 'block';
   document.getElementById('pfill').style.width = pct + '%';
 }
 
-/* ═══════════════════════════════════════════════════════
-   MAIN GENERATE PIPELINE
-═══════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════
+   MAIN PIPELINE
+═══════════════════════════════════════════════════ */
 async function generate() {
   const apiKey = document.getElementById('groqKey').value.trim() || localStorage.getItem('sz_groq_key');
-  if (!apiKey) { toast('Groq API Key bulunamadı! Adım 1\'e dönün.', 'err'); return; }
+  if (!apiKey) { toast('Groq API Key bulunamadı!', 'err'); return; }
 
-  const genBtn  = document.getElementById('genBtn');
-  const retryBtn= document.getElementById('retryBtn');
-  const geni    = document.getElementById('geni');
-  const gent    = document.getElementById('gent');
-  const gend    = document.getElementById('gend');
+  const genBtn = document.getElementById('genBtn');
+  const retBtn = document.getElementById('retryBtn');
+  const geni = document.getElementById('geni');
+  const gent = document.getElementById('gent');
+  const gend = document.getElementById('gend');
 
-  genBtn.disabled = true;
-  retryBtn.style.display = 'none';
-  geni.textContent = '⏳';
-  gent.textContent = 'İşlem başlatıldı...';
+  genBtn.disabled = true; retBtn.style.display = 'none';
+  geni.textContent = '⏳'; gent.textContent = 'İşlem başlatıldı...';
   gend.textContent = 'Sistem videoları okuyor, analiz ediyor ve PDF hazırlıyor.';
   document.getElementById('slog').innerHTML = '';
   document.getElementById('slog').style.display = 'none';
   setP(5);
 
   try {
-    // ── PHASE 1: Fetch transcripts ──────────────────
+    // ── Phase 1: Fetch Transcripts ──
     const urlRows = getUrlRows();
     const transcriptData = [];
 
     if (urlRows.length > 0) {
-      addLog(`${urlRows.length} video için transkript çekiliyor...`);
+      addLog(`${urlRows.length} video için transkript çekiliyor (3 yöntem)...`);
+      gent.textContent = 'Videolar okunuyor...';
 
-      const results = await Promise.allSettled(
-        urlRows.map(async (row) => {
-          setUrlSt(row.idx, 'loading', '<span class="spin"></span> Transkript çekiliyor...');
-          addLog(`▶ Video çekiliyor: ${row.url.substring(0, 55)}...`);
-          const text = await fetchTranscript(row.vid);
-          setUrlSt(row.idx, 'ok', `✓ ${text.length.toLocaleString()} karakter transkript`);
+      const results = await Promise.allSettled(urlRows.map(async (row) => {
+        if (!row.vid) throw new Error('Geçersiz YouTube URL');
+        setUrlSt(row.idx, 'loading', '<span class="spin"></span> Transkript çekiliyor...');
+        addLog(`▶ Video: ${row.url.substring(0, 55)}...`);
+
+        let text = null;
+        // Check for manual fallback first
+        if (row.manual && row.manual.length > 20) {
+          text = row.manual;
+          addLog(`📋 Manuel transkript kullanıldı (${text.length.toLocaleString()} karakter)`, 'ok');
+        } else {
+          text = await fetchTranscript(row.vid);
           addLog(`✓ Transkript alındı: ${text.length.toLocaleString()} karakter`, 'ok');
-          return { url: row.url, text, chars: text.length };
-        })
-      );
+        }
+
+        setUrlSt(row.idx, 'ok', `✓ ${text.length.toLocaleString()} karakter transkript`);
+        return { url: row.url, text, chars: text.length };
+      }));
 
       results.forEach((r, i) => {
         if (r.status === 'fulfilled') {
           transcriptData.push(r.value);
         } else {
           const row = urlRows[i];
-          setUrlSt(row.idx, 'err', `✗ ${r.reason?.message || 'Bilinmeyen hata'}`);
+          setUrlSt(row.idx, 'err', `✗ ${r.reason?.message || 'Bilinmeyen hata'} — Aşağıya manuel yapıştırabilirsiniz`);
           addLog(`✗ Video ${i + 1} başarısız: ${r.reason?.message}`, 'err');
         }
       });
 
-      if (transcriptData.length === 0 && urlRows.length > 0) {
-        throw new Error('Hiçbir videodan transkript çekilemedi. Altyazı açık bir video kullanın veya videoları kaldırıp sadece senaryo ile devam edin.');
+      // If ALL failed and no manual fallback
+      if (transcriptData.length === 0) {
+        const hasManual = urlRows.some(r => r.manual?.length > 20);
+        if (!hasManual) {
+          throw new Error('Hiçbir videodan transkript çekilemedi. Her başarısız video altındaki alana transkripti manuel yapıştırın, veya videoları kaldırıp sadece senaryo ile devam edin.');
+        }
       }
-    } else {
-      addLog('Video yok — sadece senaryo ile devam ediliyor', 'inf');
     }
 
     setP(45);
 
-    // ── PHASE 2: Groq API ───────────────────────────
+    // ── Phase 2: Groq ──
     gent.textContent = 'Groq analiz ediyor...';
     addLog('Groq Llama 3.3 70B\'ye bağlanılıyor...');
-    const prompt = buildPrompt(transcriptData);
-    const raw = await callGroq(prompt, apiKey);
-    addLog(`Groq yanıtı alındı (${raw.length.toLocaleString()} karakter)`, 'ok');
+    const raw = await callGroq(buildPrompt(transcriptData), apiKey);
+    addLog(`Yanıt alındı (${raw.length.toLocaleString()} karakter)`, 'ok');
     setP(75);
 
-    // ── PHASE 3: Parse JSON ─────────────────────────
+    // ── Phase 3: Parse JSON ──
     let data;
     try {
       const m = raw.match(/\{[\s\S]*\}/);
       if (!m) throw new Error('JSON bloğu bulunamadı');
       data = JSON.parse(m[0]);
     } catch (e) {
-      throw new Error(`JSON parse hatası: ${e.message}\n\nGroq yanıtının ilk 400 karakteri:\n${raw.substring(0, 400)}`);
+      throw new Error(`JSON parse hatası: ${e.message}\n\nYanıt başlangıcı:\n${raw.substring(0, 400)}`);
     }
-    addLog('JSON parse edildi', 'ok');
-    setP(82);
+    addLog('JSON parse edildi', 'ok'); setP(82);
 
-    // ── PHASE 4: PDF ────────────────────────────────
+    // ── Phase 4: PDF ──
     gent.textContent = 'PDF oluşturuluyor...';
     addLog('jsPDF ile PDF hazırlanıyor...');
     await buildPDF(data);
-    setP(100);
-    addLog('PDF indirildi!', 'ok');
+    setP(100); addLog('PDF indirildi!', 'ok');
 
-    geni.textContent = '✅';
-    gent.textContent = 'PDF Hazır!';
+    geni.textContent = '✅'; gent.textContent = 'PDF Hazır!';
     gend.textContent = 'Süper Zırhlı notun indirildi. Sınava hazırsın! 🎉';
-    genBtn.textContent = '🔄 Yeniden Üret';
-    genBtn.disabled = false;
+    genBtn.textContent = '🔄 Yeniden Üret'; genBtn.disabled = false;
     toast('Süper Zırhlı PDF indirildi! 🎉', 'ok');
 
   } catch (err) {
     addLog(`Hata: ${err.message}`, 'err');
-    geni.textContent = '❌';
-    gent.textContent = 'Hata oluştu';
-    gend.textContent = err.message.substring(0, 220);
-    genBtn.disabled = false;
-    retryBtn.style.display = 'inline-flex';
+    geni.textContent = '❌'; gent.textContent = 'Hata oluştu';
+    gend.textContent = err.message.substring(0, 250);
+    genBtn.disabled = false; retBtn.style.display = 'inline-flex';
     toast('Hata — log\'u kontrol edin', 'err');
   }
 }
 
-/* ═══════════════════════════════════════════════════════
-   PDF BUILDER — jsPDF + AutoTable
-═══════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════
+   PDF BUILDER
+═══════════════════════════════════════════════════ */
 async function buildPDF(data) {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
   const PW = 210, PH = 297, ML = 13, MR = 13, CW = PW - ML - MR;
-
   const C = {
-    navy:   [26, 26, 46],   navy2:  [15, 52, 96],
-    red:    [233, 69, 96],  redP:   [255, 243, 243],
-    green:  [26, 107, 60],  greenP: [240, 255, 246],
-    blueP:  [240, 248, 255],stripe: [232, 237, 248],
-    gold:   [240, 165, 0],  white:  [255, 255, 255],
-    black:  [20, 20, 30],   gray:   [100, 116, 139],
-    groq:   [245, 80, 54],
+    navy:[26,26,46], navy2:[15,52,96], red:[233,69,96], redP:[255,243,243],
+    green:[26,107,60], greenP:[240,255,246], blueP:[240,248,255],
+    stripe:[232,237,248], gold:[240,165,0], white:[255,255,255],
+    black:[20,20,30], gray:[100,116,139], groq:[245,80,54],
   };
 
   let y = 0, pg = 1;
-
   function footer() {
     doc.setFontSize(7.5); doc.setTextColor(...C.gray);
-    const left = `${data.ders || ''} | ${data.sinif}. Sınıf | ${data.donem}. Dönem | ${data.yazili_no}. Yazılı`;
-    doc.text(left, ML, PH - 6);
-    doc.text(String(pg), PW - ML, PH - 6, { align: 'right' });
-    doc.setDrawColor(...C.gray); doc.setLineWidth(0.2);
-    doc.line(ML, PH - 9, PW - MR, PH - 9);
+    doc.text(`${data.ders||''} | ${data.sinif}. Sinif | ${data.donem}. Donem | ${data.yazili_no}. Yazili`, ML, PH-6);
+    doc.text(String(pg), PW-ML, PH-6, {align:'right'});
+    doc.setDrawColor(...C.gray); doc.setLineWidth(0.2); doc.line(ML, PH-9, PW-MR, PH-9);
   }
+  function newPage() { doc.addPage(); pg++; y=18; footer(); }
+  function chk(n=20) { if (y+n > PH-14) newPage(); }
+  function sf(s,sz) { doc.setFontSize(sz); try{doc.setFont('helvetica',s);}catch{} }
 
-  function newPage() { doc.addPage(); pg++; y = 18; footer(); }
-  function chk(n = 20) { if (y + n > PH - 14) newPage(); }
-  function sf(s, sz) { doc.setFontSize(sz); try { doc.setFont('helvetica', s); } catch {} }
+  /* COVER */
+  doc.setFillColor(...C.navy); doc.rect(0,0,PW,PH,'F');
+  doc.setFillColor(...C.groq); doc.rect(0,0,PW,5,'F');
+  doc.setFillColor(...C.navy2); doc.rect(0,PH-50,PW,50,'F');
 
-  /* ── COVER ── */
-  doc.setFillColor(...C.navy); doc.rect(0, 0, PW, PH, 'F');
-  doc.setFillColor(...C.groq); doc.rect(0, 0, PW, 5, 'F');
-  doc.setFillColor(...C.navy2); doc.rect(0, PH - 50, PW, 50, 'F');
+  sf('bold',44); doc.setTextColor(...C.groq); doc.text('🛡️',PW/2,55,{align:'center'});
+  sf('bold',21); doc.setTextColor(...C.groq); doc.text('SUPER ZIRHLII',PW/2,74,{align:'center'});
+  sf('normal',10); doc.setTextColor(185,200,225); doc.text('SINAV HAZIRLIK NOTU',PW/2,83,{align:'center'});
+  doc.setDrawColor(...C.groq); doc.setLineWidth(0.8); doc.line(ML+25,90,PW-MR-25,90);
 
-  sf('bold', 44); doc.setTextColor(...C.groq); doc.text('🛡️', PW / 2, 55, { align: 'center' });
-  sf('bold', 21); doc.setTextColor(...C.groq); doc.text('SUPER ZIRHLII', PW / 2, 74, { align: 'center' });
-  sf('normal', 10); doc.setTextColor(185, 200, 225); doc.text('SINAV HAZIRLIK NOTU', PW / 2, 83, { align: 'center' });
+  doc.setFillColor(...C.navy2); doc.roundedRect(ML,97,CW,40,4,4,'F');
+  sf('bold',21); doc.setTextColor(...C.white); doc.text(data.ders||'Ders',PW/2,114,{align:'center'});
+  sf('normal',10); doc.setTextColor(175,200,235);
+  doc.text(`${data.sinif}. Sinif  |  ${data.donem}. Donem  |  ${data.yazili_no}. Yazili`,PW/2,125,{align:'center'});
 
-  doc.setDrawColor(...C.groq); doc.setLineWidth(0.8); doc.line(ML + 25, 90, PW - MR - 25, 90);
-
-  doc.setFillColor(...C.navy2); doc.roundedRect(ML, 97, CW, 40, 4, 4, 'F');
-  sf('bold', 21); doc.setTextColor(...C.white); doc.text(data.ders || 'Ders', PW / 2, 114, { align: 'center' });
-  sf('normal', 10); doc.setTextColor(175, 200, 235);
-  doc.text(`${data.sinif}. Sinif  |  ${data.donem}. Donem  |  ${data.yazili_no}. Yazili`, PW / 2, 125, { align: 'center' });
-
-  // Topic table on cover
   const bolumler = data.bolumler || [];
-  const coverRows = bolumler.map(b => [b.kazanim_kodu || '—', b.baslik || '', String((b.sorular || []).length) + ' Soru']);
-  if (coverRows.length > 0) {
-    doc.autoTable({
-      startY: 146, head: [['Kazanim', 'Konu', 'Soru']], body: coverRows,
-      margin: { left: ML, right: MR },
-      styles: { fontSize: 8.2, cellPadding: 2.6, textColor: [210, 220, 245], fillColor: [22, 33, 60], lineColor: [45, 65, 110], lineWidth: 0.25 },
-      headStyles: { fillColor: C.groq, textColor: C.white, fontStyle: 'bold', fontSize: 8.2 },
-      alternateRowStyles: { fillColor: [18, 28, 52] },
-    });
+  const coverRows = bolumler.map(b=>[b.kazanim_kodu||'—',b.baslik||'',`${(b.sorular||[]).length} Soru`]);
+  if (coverRows.length>0) {
+    doc.autoTable({startY:146,head:[['Kazanim','Konu','Soru']],body:coverRows,margin:{left:ML,right:MR},
+      styles:{fontSize:8.2,cellPadding:2.6,textColor:[210,220,245],fillColor:[22,33,60],lineColor:[45,65,110],lineWidth:0.25},
+      headStyles:{fillColor:C.groq,textColor:C.white,fontStyle:'bold',fontSize:8.2},
+      alternateRowStyles:{fillColor:[18,28,52]}});
   }
+  sf('normal',7.5); doc.setTextColor(90,110,155);
+  const date = new Date().toLocaleDateString('tr-TR',{day:'2-digit',month:'long',year:'numeric'});
+  doc.text(`${date}  |  Groq Llama 3.3 70B  |  Super Zirhlii`,PW/2,PH-8,{align:'center'});
 
-  sf('normal', 7.5); doc.setTextColor(90, 110, 155);
-  const date = new Date().toLocaleDateString('tr-TR', { day: '2-digit', month: 'long', year: 'numeric' });
-  doc.text(`Olusturulma: ${date}  |  Groq Llama 3.3 70B  |  Super Zirhlii PDF Ureticisi`, PW / 2, PH - 8, { align: 'center' });
+  /* CONTENT PAGES */
+  doc.addPage(); pg=2; y=18; footer();
 
-  /* ── CONTENT PAGES ── */
-  doc.addPage(); pg = 2; y = 18; footer();
-
-  for (let bi = 0; bi < bolumler.length; bi++) {
+  for (let bi=0; bi<bolumler.length; bi++) {
     const b = bolumler[bi];
     chk(30);
 
-    // Section header
-    doc.setFillColor(...C.navy); doc.rect(ML - 2, y - 5, CW + 4, 14, 'F');
-    doc.setFillColor(...C.groq); doc.rect(ML - 2, y - 5, 4, 14, 'F');
-    sf('bold', 11.5); doc.setTextColor(...C.white);
-    const secTxt = `${b.kazanim_kodu ? b.kazanim_kodu + '  —  ' : ''}${b.baslik || 'Konu'}`;
-    doc.text(doc.splitTextToSize(secTxt, CW - 25), ML + 6, y + 4);
-    const sq = (b.sorular || []).length;
-    if (sq) { sf('bold', 8); doc.setTextColor(...C.groq); doc.text(`${sq} Soru`, PW - MR, y + 4, { align: 'right' }); }
-    y += 16;
+    doc.setFillColor(...C.navy); doc.rect(ML-2,y-5,CW+4,14,'F');
+    doc.setFillColor(...C.groq); doc.rect(ML-2,y-5,4,14,'F');
+    sf('bold',11.5); doc.setTextColor(...C.white);
+    doc.text(doc.splitTextToSize(`${b.kazanim_kodu?b.kazanim_kodu+'  —  ':''}${b.baslik||'Konu'}`,CW-25),ML+6,y+4);
+    const sq=(b.sorular||[]).length;
+    if(sq){sf('bold',8);doc.setTextColor(...C.groq);doc.text(`${sq} Soru`,PW-MR,y+4,{align:'right'});}
+    y+=16;
 
-    // Concepts & Formulas table
-    const tRows = [];
-    (b.kavramlar || []).forEach(k => tRows.push([k.terim || '', k.tanim || '', '']));
-    (b.formuller || []).forEach(f => tRows.push([f.isim || '', f.formul || '', f.aciklama || '']));
-    if (tRows.length > 0) {
-      chk(14);
-      sf('bold', 8.5); doc.setTextColor(...C.navy2); doc.text('  Kavramlar ve Formuller', ML, y); y += 4;
-      doc.autoTable({
-        startY: y, head: [['Terim / Formul', 'Icerik', 'Aciklama']], body: tRows,
-        margin: { left: ML, right: MR },
-        styles: { fontSize: 8.2, cellPadding: 2.4, textColor: C.black, lineColor: [210, 218, 235], lineWidth: 0.2, overflow: 'linebreak' },
-        headStyles: { fillColor: C.navy, textColor: C.white, fontStyle: 'bold', fontSize: 8.2 },
-        alternateRowStyles: { fillColor: C.stripe },
-        columnStyles: { 0: { cellWidth: 42, fontStyle: 'bold' }, 1: { cellWidth: 78 }, 2: { cellWidth: 'auto' } },
-        didDrawPage: () => { if (pg < doc.getNumberOfPages()) { pg = doc.getNumberOfPages(); footer(); } },
-      });
-      y = doc.lastAutoTable.finalY + 6;
+    const tRows=[];
+    (b.kavramlar||[]).forEach(k=>tRows.push([k.terim||'',k.tanim||','','']));
+    (b.formuller||[]).forEach(f=>tRows.push([f.isim||'',f.formul||'',f.aciklama||'']));
+    if(tRows.length>0){
+      chk(14); sf('bold',8.5); doc.setTextColor(...C.navy2); doc.text('  Kavramlar ve Formuller',ML,y); y+=4;
+      doc.autoTable({startY:y,head:[['Terim / Formul','Icerik','Aciklama']],body:tRows,margin:{left:ML,right:MR},
+        styles:{fontSize:8.2,cellPadding:2.4,textColor:C.black,lineColor:[210,218,235],lineWidth:0.2,overflow:'linebreak'},
+        headStyles:{fillColor:C.navy,textColor:C.white,fontStyle:'bold',fontSize:8.2},
+        alternateRowStyles:{fillColor:C.stripe},
+        columnStyles:{0:{cellWidth:42,fontStyle:'bold'},1:{cellWidth:78},2:{cellWidth:'auto'}},
+        didDrawPage:()=>{if(pg<doc.getNumberOfPages()){pg=doc.getNumberOfPages();footer();}}});
+      y=doc.lastAutoTable.finalY+6;
     }
 
-    // Critical info
-    if (b.kritik_bilgiler?.length > 0) {
-      chk(16);
-      sf('bold', 8.5); doc.setTextColor(...C.navy2); doc.text('  Kritik Bilgiler', ML, y); y += 5;
-      for (const kb of b.kritik_bilgiler) {
-        const ls = doc.splitTextToSize(`• ${kb}`, CW - 5);
-        chk(ls.length * 4.5 + 2);
-        sf('normal', 8.2); doc.setTextColor(...C.black); doc.text(ls, ML + 3, y);
-        y += ls.length * 4.5 + 1;
+    if(b.kritik_bilgiler?.length>0){
+      chk(16); sf('bold',8.5); doc.setTextColor(...C.navy2); doc.text('  Kritik Bilgiler',ML,y); y+=5;
+      for(const kb of b.kritik_bilgiler){
+        const ls=doc.splitTextToSize(`• ${kb}`,CW-5);
+        chk(ls.length*4.5+2); sf('normal',8.2); doc.setTextColor(...C.black); doc.text(ls,ML+3,y);
+        y+=ls.length*4.5+1;
       }
-      y += 3;
+      y+=3;
     }
 
-    // Questions
-    if (b.sorular?.length > 0) {
-      chk(20);
-      sf('bold', 8.5); doc.setTextColor(...C.navy2); doc.text('  Senaryo Uyumlu Sorular', ML, y); y += 5;
-      for (let si = 0; si < b.sorular.length; si++) {
-        const s = b.sorular[si];
-        const qLines = doc.splitTextToSize(`Soru ${s.soru_no || si + 1}: ${s.soru}`, CW - 8);
-        const qH = qLines.length * 4.8 + 9;
-        chk(qH + 5);
-        doc.setFillColor(...C.blueP); doc.setDrawColor(100, 155, 220); doc.setLineWidth(0.4);
-        doc.roundedRect(ML, y - 2, CW, qH, 2.5, 2.5, 'FD');
-        sf('bold', 8.5); doc.setTextColor(...C.navy2); doc.text(qLines, ML + 4, y + 3);
-        y += qH + 3;
-        if (s.cozum_adimlari?.length > 0) {
-          sf('bold', 7.8); doc.setTextColor(...C.navy); doc.text('Cozum:', ML + 4, y); y += 4;
-          for (const step of s.cozum_adimlari) {
-            const sls = doc.splitTextToSize(step, CW - 12);
-            chk(sls.length * 4.2 + 2);
-            sf('normal', 7.8); doc.setTextColor(...C.black); doc.text(sls, ML + 7, y);
-            y += sls.length * 4.2 + 1;
+    if(b.sorular?.length>0){
+      chk(20); sf('bold',8.5); doc.setTextColor(...C.navy2); doc.text('  Senaryo Uyumlu Sorular',ML,y); y+=5;
+      for(let si=0;si<b.sorular.length;si++){
+        const s=b.sorular[si];
+        const qLines=doc.splitTextToSize(`Soru ${s.soru_no||si+1}: ${s.soru}`,CW-8);
+        const qH=qLines.length*4.8+9; chk(qH+5);
+        doc.setFillColor(...C.blueP); doc.setDrawColor(100,155,220); doc.setLineWidth(0.4);
+        doc.roundedRect(ML,y-2,CW,qH,2.5,2.5,'FD');
+        sf('bold',8.5); doc.setTextColor(...C.navy2); doc.text(qLines,ML+4,y+3); y+=qH+3;
+        if(s.cozum_adimlari?.length>0){
+          sf('bold',7.8); doc.setTextColor(...C.navy); doc.text('Cozum:',ML+4,y); y+=4;
+          for(const step of s.cozum_adimlari){
+            const sls=doc.splitTextToSize(step,CW-12); chk(sls.length*4.2+2);
+            sf('normal',7.8); doc.setTextColor(...C.black); doc.text(sls,ML+7,y); y+=sls.length*4.2+1;
           }
-          y += 3;
+          y+=3;
         }
       }
     }
 
-    // 85+ Trap box
-    if (b.tuzak) {
-      const tzLines = doc.splitTextToSize(`85+ TAM PUAN TUZAGI: ${b.tuzak}`, CW - 9);
-      const tzH = tzLines.length * 4.8 + 11;
-      chk(tzH + 4);
+    if(b.tuzak){
+      const tzLines=doc.splitTextToSize(`85+ TAM PUAN TUZAGI: ${b.tuzak}`,CW-9);
+      const tzH=tzLines.length*4.8+11; chk(tzH+4);
       doc.setFillColor(...C.redP); doc.setDrawColor(...C.red); doc.setLineWidth(1.2);
-      doc.roundedRect(ML, y, CW, tzH, 3, 3, 'FD');
-      sf('bold', 8.2); doc.setTextColor(...C.red); doc.text(tzLines, ML + 5, y + 7);
-      y += tzH + 5;
+      doc.roundedRect(ML,y,CW,tzH,3,3,'FD');
+      sf('bold',8.2); doc.setTextColor(...C.red); doc.text(tzLines,ML+5,y+7); y+=tzH+5;
     }
 
-    // Reflex box
-    if (b.refleks) {
-      const rfLines = doc.splitTextToSize(`FORMAT REFLEKS: ${b.refleks}`, CW - 9);
-      const rfH = rfLines.length * 4.8 + 11;
-      chk(rfH + 4);
+    if(b.refleks){
+      const rfLines=doc.splitTextToSize(`FORMAT REFLEKS: ${b.refleks}`,CW-9);
+      const rfH=rfLines.length*4.8+11; chk(rfH+4);
       doc.setFillColor(...C.greenP); doc.setDrawColor(...C.green); doc.setLineWidth(1.2);
-      doc.roundedRect(ML, y, CW, rfH, 3, 3, 'FD');
-      sf('bold', 8.2); doc.setTextColor(...C.green); doc.text(rfLines, ML + 5, y + 7);
-      y += rfH + 8;
+      doc.roundedRect(ML,y,CW,rfH,3,3,'FD');
+      sf('bold',8.2); doc.setTextColor(...C.green); doc.text(rfLines,ML+5,y+7); y+=rfH+8;
     }
 
-    if (bi < bolumler.length - 1) {
-      chk(5); doc.setDrawColor(...C.stripe); doc.setLineWidth(0.3);
-      doc.line(ML, y, PW - MR, y); y += 8;
-    }
+    if(bi<bolumler.length-1){chk(5);doc.setDrawColor(...C.stripe);doc.setLineWidth(0.3);doc.line(ML,y,PW-MR,y);y+=8;}
   }
 
-  /* ── HIZLI TEKRAR PAGE ── */
+  /* HIZLI TEKRAR */
   newPage();
-  doc.setFillColor(...C.navy2); doc.rect(ML - 2, y - 5, CW + 4, 14, 'F');
-  doc.setFillColor(...C.gold); doc.rect(ML - 2, y - 5, 4, 14, 'F');
-  sf('bold', 12); doc.setTextColor(...C.white);
-  doc.text('HIZLI TEKRAR OZETI  —  Sinava 30 Dakika Kala', ML + 6, y + 4);
-  y += 18;
+  doc.setFillColor(...C.navy2); doc.rect(ML-2,y-5,CW+4,14,'F');
+  doc.setFillColor(...C.gold); doc.rect(ML-2,y-5,4,14,'F');
+  sf('bold',12); doc.setTextColor(...C.white); doc.text('HIZLI TEKRAR OZETI  —  Sinava 30 Dakika Kala',ML+6,y+4); y+=18;
 
-  const tekrar = (data.hizli_tekrar || []).map(t => [t.kavram || '', t.formul_veya_kural || '', t.kritik_not || '']);
-  if (tekrar.length > 0) {
-    doc.autoTable({
-      startY: y, head: [['Kavram', 'Formul / Kural', 'Kritik Not']], body: tekrar,
-      margin: { left: ML, right: MR },
-      styles: { fontSize: 8.2, cellPadding: 2.8, textColor: C.black, lineColor: [210, 218, 235], lineWidth: 0.2, overflow: 'linebreak' },
-      headStyles: { fillColor: C.navy2, textColor: C.white, fontStyle: 'bold' },
-      alternateRowStyles: { fillColor: C.stripe },
-      columnStyles: { 0: { cellWidth: 45, fontStyle: 'bold' }, 1: { cellWidth: 72 }, 2: { cellWidth: 'auto' } },
-      didDrawPage: () => { if (pg < doc.getNumberOfPages()) { pg = doc.getNumberOfPages(); footer(); } },
-    });
-    y = doc.lastAutoTable.finalY + 10;
+  const tekrar=(data.hizli_tekrar||[]).map(t=>[t.kavram||'',t.formul_veya_kural||'',t.kritik_not||'']);
+  if(tekrar.length>0){
+    doc.autoTable({startY:y,head:[['Kavram','Formul / Kural','Kritik Not']],body:tekrar,margin:{left:ML,right:MR},
+      styles:{fontSize:8.2,cellPadding:2.8,textColor:C.black,lineColor:[210,218,235],lineWidth:0.2,overflow:'linebreak'},
+      headStyles:{fillColor:C.navy2,textColor:C.white,fontStyle:'bold'},
+      alternateRowStyles:{fillColor:C.stripe},
+      columnStyles:{0:{cellWidth:45,fontStyle:'bold'},1:{cellWidth:72},2:{cellWidth:'auto'}},
+      didDrawPage:()=>{if(pg<doc.getNumberOfPages()){pg=doc.getNumberOfPages();footer();}}});
+    y=doc.lastAutoTable.finalY+10;
   }
 
-  if (data.son_dakika?.length > 0) {
-    const sdTxt = data.son_dakika.map((s, i) => `${i + 1}. ${s}`).join('\n');
-    const sdLines = doc.splitTextToSize(sdTxt, CW - 10);
-    const sdH = sdLines.length * 4.8 + 18;
-    chk(sdH);
+  if(data.son_dakika?.length>0){
+    const sdLines=doc.splitTextToSize(data.son_dakika.map((s,i)=>`${i+1}. ${s}`).join('\n'),CW-10);
+    const sdH=sdLines.length*4.8+18; chk(sdH);
     doc.setFillColor(...C.redP); doc.setDrawColor(...C.red); doc.setLineWidth(1.5);
-    doc.roundedRect(ML, y, CW, sdH, 4, 4, 'FD');
-    sf('bold', 10); doc.setTextColor(...C.red); doc.text('SON DAKIKA HATIRLATMALARI', ML + 5, y + 8);
-    sf('normal', 8.2); doc.setTextColor(...C.black); doc.text(sdLines, ML + 5, y + 15);
+    doc.roundedRect(ML,y,CW,sdH,4,4,'FD');
+    sf('bold',10); doc.setTextColor(...C.red); doc.text('SON DAKIKA HATIRLATMALARI',ML+5,y+8);
+    sf('normal',8.2); doc.setTextColor(...C.black); doc.text(sdLines,ML+5,y+15);
   }
 
-  const fn = `SuperZirhlii_${(data.ders || 'Sinav').replace(/\s+/g,'_')}_${data.sinif}Sinif_${data.donem}D_${data.yazili_no}Y.pdf`;
-  doc.save(fn);
+  doc.save(`SuperZirhlii_${(data.ders||'Sinav').replace(/\s+/g,'_')}_${data.sinif}S_${data.donem}D_${data.yazili_no}Y.pdf`);
 }
 
-/* ═══════════════════════════════════════════════════════
-   UTILITIES
-═══════════════════════════════════════════════════════ */
-function toast(msg, type = 'inf') {
+/* ═══════════════════════════════════════════════════
+   UTILS
+═══════════════════════════════════════════════════ */
+function toast(msg, type='inf') {
   document.querySelector('.toast')?.remove();
   const t = document.createElement('div');
   t.className = `toast ${type}`; t.textContent = msg;
