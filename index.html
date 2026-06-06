@@ -881,6 +881,46 @@ function setP(pct) {
 }
 
 /* ═══════════════════════════════════════════════════
+   PDF SANITIZER (jsPDF Helvetica = Latin-1 only)
+═══════════════════════════════════════════════════ */
+function sanitizePDF(t) {
+  if (typeof t !== 'string') return t;
+  return t
+    // Greek letters → readable text
+    .replace(/ρ/g,'rho').replace(/α/g,'alfa').replace(/β/g,'beta')
+    .replace(/γ/g,'gama').replace(/δ/g,'delta').replace(/θ/g,'teta')
+    .replace(/λ/g,'lambda').replace(/μ/g,'mu').replace(/σ/g,'sigma')
+    .replace(/ω/g,'omega').replace(/φ/g,'phi').replace(/π/g,'pi')
+    .replace(/Σ/g,'SIGMA').replace(/Ω/g,'OMEGA').replace(/Π/g,'PI')
+    .replace(/Δ/g,'DELTA').replace(/Φ/g,'PHI').replace(/Γ/g,'GAMA')
+    // Math symbols
+    .replace(/²/g,'^2').replace(/³/g,'^3').replace(/°/g,' derece')
+    .replace(/×/g,' x ').replace(/÷/g,'/').replace(/±/g,'+/-')
+    .replace(/≤/g,'<=').replace(/≥/g,'>=').replace(/≠/g,'!=')
+    .replace(/√/g,'kok').replace(/∞/g,'sonsuz').replace(/∫/g,'integral')
+    .replace(/·/g,'.').replace(/⋅/g,'.').replace(/•/g,'-')
+    // Arrows
+    .replace(/→/g,'->').replace(/←/g,'<-').replace(/⇒/g,'=>')
+    .replace(/↑/g,'^').replace(/↓/g,'v')
+    // Fractions
+    .replace(/½/g,'1/2').replace(/¼/g,'1/4').replace(/¾/g,'3/4')
+    // Strip any remaining non-Latin chars that jsPDF can't handle
+    .replace(/[\u0100-\u024F\u0250-\u02AF\u0370-\u03FF\u2000-\u206F\u2070-\u209F\u20A0-\u20CF\u2100-\u214F]/g, '')
+    .trim();
+}
+
+function sanitizeData(obj) {
+  if (typeof obj === 'string') return sanitizePDF(obj);
+  if (Array.isArray(obj)) return obj.map(sanitizeData);
+  if (obj && typeof obj === 'object') {
+    const out = {};
+    for (const [k,v] of Object.entries(obj)) out[k] = sanitizeData(v);
+    return out;
+  }
+  return obj;
+}
+
+/* ═══════════════════════════════════════════════════
    MAIN PIPELINE
 ═══════════════════════════════════════════════════ */
 async function generate() {
@@ -968,7 +1008,10 @@ async function generate() {
     } catch (e) {
       throw new Error(`JSON parse hatası: ${e.message}\n\nYanıt başlangıcı:\n${raw.substring(0, 400)}`);
     }
-    addLog('JSON parse edildi', 'ok'); setP(82);
+    addLog('JSON parse edildi', 'ok');
+    // Sanitize all text for jsPDF Latin encoding (fixes rho, delta etc.)
+    data = sanitizeData(data);
+    setP(82);
 
     // ── Phase 4: PDF ──
     gent.textContent = 'PDF oluşturuluyor...';
