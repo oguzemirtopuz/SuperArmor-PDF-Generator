@@ -1004,7 +1004,7 @@ async function buildPDF(data) {
     y+=16;
 
     const tRows=[];
-    (b.kavramlar||[]).forEach(k=>tRows.push([k.terim||'',k.tanim||','','']));
+    (b.kavramlar||[]).forEach(k=>tRows.push([k.terim||'',k.tanim||'','']));
     (b.formuller||[]).forEach(f=>tRows.push([f.isim||'',f.formul||'',f.aciklama||'']));
     if(tRows.length>0){
       chk(14); sf('bold',8.5); doc.setTextColor(...C.navy2); doc.text('  Kavramlar ve Formuller',ML,y); y+=4;
