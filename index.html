@@ -789,8 +789,8 @@ function buildPrompt(transcriptData) {
       ).join('\n\n')
     : null;
 
-  return `Sen Kıdemli bir MEB ${ders} Öğretmeni, Sınav Komisyonu Başkanı ve Uzman bir Yapay Zeka Doküman Tasarımcısısın.
-Görevin: ${sinif}. sınıf ${donem}. dönem ${yazili}. yazılısı açık uçlu ortak sınavı için "SÜPER ZIRHLI" formatında, kusursuz, akademik olarak hatasız ve nokta atışı bir "Master Çalışma Notu" oluşturmaktır.
+  return `Sen MEB Ölçme, Değerlendirme ve Sınav Hizmetleri Genel Müdürlüğü Sınav Komisyonu Başkanısın. Aynı zamanda dünyanın en katı Akademik Editörü ve Kusursuz Yapay Zeka Doküman Tasarımcısısın.
+Görevin: ${sinif}. sınıf ${donem}. dönem ${yazili}. yazılısı açık uçlu ortak sınavı için "SÜPER ZIRHLI" formatında, hiçbir akademik boşluk, mantık hatası veya eksik kelime barındırmayan %100 kusursuz bir "Master Çalışma Notu" üretmektir.
 
 DERS: ${ders} | SINIF: ${sinif} | DÖNEM: ${donem} | YAZILI: ${yazili}
 
@@ -800,25 +800,29 @@ ${senaryo || 'Senaryo girilmedi — konuları transkriptten belirle'}
 
 ${special ? `═══ ÖZEL TALİMATLAR (EN YÜKSEK ÖNCELİK — üstteki her şeyi override eder) ═══\n${special}\n` : ''}
 
-ÇIKTI ÜRETİRKEN UYMAN GEREKEN ÖLÜMCÜL KISITLAMALAR VE AKADEMİK KURALLAR:
+🔴 ÖLÜMCÜL UYULMASI GEREKEN 10/10 DENETİM KURALLARI (MANDATORY AUDIT):
 
-1. MÜFREDAT VE SEVİYE SINIRI (ÜST SEVİYE BİLGİ/FORMÜL YASAĞI):
-- ${sinif}. sınıf MEB müfredatında yer almayan, üniversite veya üst sınıf seviyesindeki formülleri (örn: Bernoulli genel denklemi, U=3/2nRT vb.), ağır matematiksel hesaplamaları ve teorik detayları KESİNLİKLE dökümana ekleme. 
-- MEB açık uçlu sınav senaryoları tamamen temel kavramsal yorum, günlük hayatla ilişkilendirme ve mantık odaklıdır. Öğrenciyi gereksiz akademik yükle boğma. Abartılı sayılar yerine sade, mantık arayan örnekler ver.
+1. %100 MEB MÜFREDAT SINIRI (AKADEMİK ASKERİ DİSİPLİN):
+- ${sinif}. sınıf seviyesinde MEB müfredatında resmi olarak yer almayan, üniversite veya üst sınıf seviyesindeki formülleri (örn: Bernoulli genel denklemi, İdeal gaz U=3/2nRT vb.), ağır matematiksel hesaplamaları KESİNLİKLE dökümana ekleme.
+- MEB açık uçlu sınav senaryoları tamamen temel kavramsal yorum, günlük hayatla ilişkilendirme ve mantık odaklıdır. Öğrenciyi formüle boğma.
 
-2. KAVRAMSAL DOĞRULUK VE SANRI (HALLUCINATION) ENGELLEME:
-- Fizik, Kimya, Biyoloji gibi derslerdeki kritik bilgi hatalarını yapma (Örn: Kaldırma kuvveti, cismin ağırlığına değil, yer değiştiren sıvıya bağlıdır). 
-- İnternetteki veya yapay zeka modellerindeki popüler kavram yanılgılarını süzgeçten geçir. En güncel ve bilimsel olarak en doğru haliyle MEB ders kitaplarına uygun yaz.
+2. BAŞLIK-İÇERİK EKSİKSİZLİK DENETİMİ (OMISSION CONTROL):
+- Bölüm veya Tablo başlıklarında adını geçirdiğin HER KAVRAMI metin içinde mutlaka detaylıca tanımla ve açıkla. Başlıkta yazıp içerikte unuttuğun tek bir kelime bile olursa bu döküman başarısız sayılır.
 
-3. "185+ TAM PUAN TUZAĞI" ve "FORMAT REFLEKS KUTUSU" KİLİTLENMESİ:
-- ÖLÜMCÜL UYARI: Bu iki alana KESİNLİKLE aynı cümleyi yazma, kilitlenme!
-- "tuzak" alanına öğrencilerin sınavda en çok düşeceği popüler bir hatayı (hocanın puan kıracağı yeri) yaz.
-- "refleks" alanına bu tuzağı alt edecek doğru bilgiyi ve hocanın tam puan vereceği sihirli anahtar cümleyi yaz.
+3. KAVRAMSAL VE BİLİMSEL KUSURSUZLUK (KRONİK AI HATALARI YASAĞI):
+- Fizik, Kimya, Biyoloji'de "maddenin ısısı arttı" gibi hatalı ifadeler kullanma (doğrusu "iç enerjisi veya sıcaklığı arttı").
+- Kaldırma kuvveti cismin ağırlığına değil, yer değiştiren sıvıya bağlıdır. Akademik olarak kusursuz ol.
 
-4. TEKNİK ZORUNLULUK: SADECE JSON ÇIKTISI VER
-- Çıktın AŞAĞIDAKİ JSON ŞEMASINA birebir uymak ZORUNDADIR. 
-- JSON öncesinde veya sonrasında HİÇBİR AÇIKLAMA, markdown veya kod bloğu kullanma.
-- Formüllerde LaTeX backslash (\\) kullanma, düz metin yaz (Örn: "F = m x a").
+4. SINAV FORMATI DOĞRULUĞU (AÇIK UÇLU YAZILI GÜVENCESİ):
+- Bu bir "AÇIK UÇLU YAZILI" sınavıdır. Metnin hiçbir yerinde "şıkları", "seçenekleri", "doğru seçeneği işaretleyin" gibi test sınavlarına ait kelimeleri KESİNLİKLE KULLANMA. 
+
+5. "185+ TAM PUAN TUZAĞI" ve "FORMAT REFLEKS KUTUSU" KİLİTLENMESİ:
+- ÖLÜMCÜL UYARI: "Tuzak" ve "Refleks" alanlarına KESİNLİKLE aynı cümleyi yazma, kilitlenme! "Tuzak" alanına öğrencinin düşeceği popüler hatayı, "Refleks" alanına ise bu tuzağı alt edecek doğru anahtar cümleyi yaz.
+
+6. TEKNİK ZORUNLULUK: SADECE JSON ÇIKTISI VER VE DİLİ BOZMA
+- Türkçe karakterleri bozma. Formüllerde LaTeX backslash (\\) kullanma, düz metin yaz (Örn: "F = m x a").
+- [ÇOK KRİTİK] SELF-CORRECTION LOOP: Çıktıyı JSON olarak basmadan önce arka planda kendi yazdığın taslağı yukarıdaki 5 kurala göre denetle. Eğer test kelimesi, müfredat dışı bilgi veya eksik tanım varsa kendi kendini düzelt. 
+- SONUÇTA SADECE GEÇERLİ JSON BAS. Öncesinde/sonrasında açıklama, markdown veya kod bloğu kullanma.
 
 JSON ŞEMASI:
 {"ders":"${ders}","sinif":"${sinif}","donem":"${donem}","yazili_no":"${yazili}","bolumler":[{"kazanim_kodu":"KOD.9.1.1","baslik":"Konu Adı","kavramlar":[{"terim":"Terim","tanim":"Açıklama"}],"formuller":[{"isim":"Kural/Formül","formul":"...","aciklama":"..."}],"kritik_bilgiler":[""],"sorular":[{"soru_no":1,"soru":"Günlük hayattan senaryolu açık uçlu soru...","cozum_adimlari":["Adım 1...","Adım 2..."]}],"tuzak":"85+ Tuzak: ...","refleks":"Hoca bunu nasıl sorar: ... | Refleks: ..."}],"hizli_tekrar":[{"kavram":"...","formul_veya_kural":"...","kritik_not":"..."}],"son_dakika":[""]}
