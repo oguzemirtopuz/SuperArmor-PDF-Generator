@@ -752,25 +752,42 @@ async function tryInvidious(videoId) {
    GROQ API
 ═══════════════════════════════════════════════════ */
 async function callGroq(prompt, apiKey) {
-  const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
-    body: JSON.stringify({
-      model: 'llama-3.3-70b-versatile',
-      messages: [
-        { role: 'system', content: 'Sen bir Türk lise sınav hazırlık uzmanısın. Her zaman eksiksiz, geçerli JSON döndür. JSON dışında hiçbir şey yazma.' },
-        { role: 'user', content: prompt }
-      ],
-      response_format: { type: 'json_object' },
-      max_tokens: 8000,
-      temperature: 0.6,
-    })
-  });
-  if (!res.ok) {
-    const e = await res.json().catch(() => ({}));
-    throw new Error(e.error?.message || `Groq HTTP ${res.status}`);
+  const models = [
+    'llama-3.3-70b-versatile',
+    'llama-3.1-70b-versatile',
+    'mixtral-8x7b-32768'
+  ];
+  let lastError;
+
+  for (const model of models) {
+    try {
+      const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+        body: JSON.stringify({
+          model: model,
+          messages: [
+            { role: 'system', content: 'Sen bir Türk lise sınav hazırlık uzmanısın. Her zaman eksiksiz, geçerli JSON döndür. JSON dışında hiçbir şey yazma.' },
+            { role: 'user', content: prompt }
+          ],
+          response_format: { type: 'json_object' },
+          max_tokens: 8000,
+          temperature: 0.6,
+        })
+      });
+
+      if (!res.ok) {
+        const e = await res.json().catch(() => ({}));
+        throw new Error(e.error?.message || \`Groq HTTP \${res.status}\`);
+      }
+      return (await res.json()).choices[0].message.content;
+    } catch (e) {
+      lastError = e;
+      console.warn(\`\${model} failed: \${e.message}\`);
+      // If we have UI logger, we could log it but let's just keep trying
+    }
   }
-  return (await res.json()).choices[0].message.content;
+  throw lastError;
 }
 
 /* ═══════════════════════════════════════════════════
