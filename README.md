@@ -9,11 +9,29 @@
 
 ---
 
-## 🚀 The Vision
+## 🚀 The Vision & Problem Statement
 
-**SuperArmor PDF Generator** is a serverless, zero-latency front-end application designed to completely automate and optimize the exam preparation process. Built entirely on client-side technologies (HTML, CSS, JavaScript) and utilizing advanced AI APIs, it takes unstructured data (YouTube transcripts, MEB scenario matrices via OCR) and engineers a flawless, highly structured, and pedagogically sound "Super Armor" PDF note.
+The modern education system demands hyper-specific preparation, yet students are left manually cross-referencing generic textbook materials against strict, predefined exam scenarios (like MEB Senaryoları). This manual process is inefficient, prone to human error, and fails to identify the critical "trap zones" where marks are typically lost.
 
-No servers, no databases, no latency. Just pure architectural efficiency converting raw knowledge into an elite study asset.
+**SuperArmor PDF Generator** is a serverless, zero-latency front-end application designed to completely automate and optimize this preparation process. Built entirely on client-side technologies and utilizing advanced AI APIs, it takes unstructured data (YouTube video transcripts, raw exam scenario matrices via OCR) and engineers a flawless, highly structured, and pedagogically sound "Super Armor" PDF study guide. 
+
+No servers, no databases, no latency. Just pure architectural efficiency converting raw knowledge into an elite, localized study asset.
+
+---
+
+## ⚡ Quick Start / Installation
+
+Because this ecosystem is strictly serverless and operates entirely within the client's browser, there are no heavy backend dependencies, package managers, or database configurations required.
+
+1.  **Clone the Repository:**
+    ```bash
+    git clone https://github.com/oguzemirtopuz/SuperArmor-PDF-Generator.git
+    cd SuperArmor-PDF-Generator
+    ```
+2.  **Launch the System:**
+    Simply double-click the `index.html` file to open it in any modern web browser (Chrome, Edge, Brave, Firefox).
+3.  **Configure Cognitive Engine:**
+    On Step 1 of the application, input either an Anthropic Claude API Key or a Google Gemini API Key. *(Note: Keys are securely stored in your browser's local storage `localStorage` and never transmitted anywhere except directly to the AI provider).*
 
 ---
 
