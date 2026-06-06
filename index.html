@@ -761,6 +761,7 @@ async function callGroq(prompt, apiKey) {
         { role: 'system', content: 'Sen bir Türk lise sınav hazırlık uzmanısın. Her zaman eksiksiz, geçerli JSON döndür. JSON dışında hiçbir şey yazma.' },
         { role: 'user', content: prompt }
       ],
+      response_format: { type: 'json_object' },
       max_tokens: 8000,
       temperature: 0.6,
     })
