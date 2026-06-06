@@ -30,8 +30,12 @@ Because this ecosystem is strictly serverless and operates entirely within the c
     ```
 2.  **Launch the System:**
     Simply double-click the `index.html` file to open it in any modern web browser (Chrome, Edge, Brave, Firefox).
-3.  **Configure Cognitive Engine:**
-    On Step 1 of the application, input either an Anthropic Claude API Key or a Google Gemini API Key. *(Note: Keys are securely stored in your browser's local storage `localStorage` and never transmitted anywhere except directly to the AI provider).*
+3.  **Configure Cognitive Engine & API Keys:**
+    On Step 1 of the application, input either an Anthropic Claude API Key or a Google Gemini API Key. 
+    *   **Get a Claude API Key:** [Anthropic Console](https://console.anthropic.com/settings/keys)
+    *   **Get a Gemini API Key:** [Google AI Studio](https://aistudio.google.com/app/apikey)
+    
+    *(Note: Keys are securely stored in your browser's local storage `localStorage` and never transmitted anywhere except directly to the AI provider).*
 
 ---
 
