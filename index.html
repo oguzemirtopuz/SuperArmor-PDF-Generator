@@ -886,6 +886,13 @@ function setP(pct) {
 function sanitizePDF(t) {
   if (typeof t !== 'string') return t;
   return t
+    // Turkish characters (jsPDF Helvetica doesn't support them, so transliterate instead of deleting)
+    .replace(/ğ/g,'g').replace(/Ğ/g,'G')
+    .replace(/ş/g,'s').replace(/Ş/g,'S')
+    .replace(/ı/g,'i').replace(/İ/g,'I')
+    .replace(/ö/g,'o').replace(/Ö/g,'O')
+    .replace(/ü/g,'u').replace(/Ü/g,'U')
+    .replace(/ç/g,'c').replace(/Ç/g,'C')
     // Greek letters → readable text
     .replace(/ρ/g,'rho').replace(/α/g,'alfa').replace(/β/g,'beta')
     .replace(/γ/g,'gama').replace(/δ/g,'delta').replace(/θ/g,'teta')
@@ -904,6 +911,8 @@ function sanitizePDF(t) {
     .replace(/↑/g,'^').replace(/↓/g,'v')
     // Fractions
     .replace(/½/g,'1/2').replace(/¼/g,'1/4').replace(/¾/g,'3/4')
+    // Quotes and typographics
+    .replace(/”/g,'"').replace(/“/g,'"').replace(/’/g,"'").replace(/‘/g,"'")
     // Strip any remaining non-Latin chars that jsPDF can't handle
     .replace(/[\u0100-\u024F\u0250-\u02AF\u0370-\u03FF\u2000-\u206F\u2070-\u209F\u20A0-\u20CF\u2100-\u214F]/g, '')
     .trim();
