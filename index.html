@@ -807,23 +807,29 @@ ${special ? `═══ ÖZEL TALİMATLAR (EN YÜKSEK ÖNCELİK — üstteki her 
 - ${sinif}. sınıf seviyesinde MEB müfredatında resmi olarak yer almayan, üniversite veya üst sınıf seviyesindeki formülleri (örn: Bernoulli genel denklemi, İdeal gaz U=3/2nRT vb.), ağır matematiksel hesaplamaları KESİNLİKLE dökümana ekleme.
 - MEB açık uçlu sınav senaryoları tamamen temel kavramsal yorum, günlük hayatla ilişkilendirme ve mantık odaklıdır. Öğrenciyi formüle boğma.
 
-2. BAŞLIK-İÇERİK EKSİKSİZLİK DENETİMİ (OMISSION CONTROL):
-- Bölüm veya Tablo başlıklarında adını geçirdiğin HER KAVRAMI metin içinde mutlaka detaylıca tanımla ve açıkla. Başlıkta yazıp içerikte unuttuğun tek bir kelime bile olursa bu döküman başarısız sayılır.
+2. %100 KONU VE KAZANIM HİZALAMASI (KAYMA VE KİLİTLENME YASAĞI):
+- Her alt başlığın, sorunun, "tuzak" kutusunun ve "refleks" kutusunun içeriği, YALNIZCA o an içinde bulunulan kazanımlarla ilgili olmak zorundadır. Odak kayması yapma (Örn: Kaldırma Kuvveti başlığı altında Bernoulli'den bahsetme).
 
-3. KAVRAMSAL VE BİLİMSEL KUSURSUZLUK (KRONİK AI HATALARI YASAĞI):
+3. TABLO EKSİKSİZLİĞİ VE SÜREKLİLİK (ERKEN KAPATMA YASAĞI):
+- Dökümanın son bölümü olan "hizli_tekrar" tablosunda, başta belirlediğin TÜM KONULARI istisnasız olarak listelemek zorundasın. İlk 2-3 konuyu yazıp, son üniteyi eklemeden tabloyu KESİNLİKLE kapatma! Yapay zeka üşengeçliği yapma.
+
+4. BAŞLIK-İÇERİK EKSİKSİZLİK DENETİMİ (OMISSION CONTROL):
+- Bölüm veya Tablo başlıklarında adını geçirdiğin HER KAVRAMI metin içinde mutlaka detaylıca tanımla ve açıkla.
+
+5. KAVRAMSAL VE BİLİMSEL KUSURSUZLUK (KRONİK AI HATALARI YASAĞI):
 - Fizik, Kimya, Biyoloji'de "maddenin ısısı arttı" gibi hatalı ifadeler kullanma (doğrusu "iç enerjisi veya sıcaklığı arttı").
 - Kaldırma kuvveti cismin ağırlığına değil, yer değiştiren sıvıya bağlıdır. Akademik olarak kusursuz ol.
 
-4. SINAV FORMATI DOĞRULUĞU (AÇIK UÇLU YAZILI GÜVENCESİ):
+6. SINAV FORMATI DOĞRULUĞU (AÇIK UÇLU YAZILI GÜVENCESİ):
 - Bu bir "AÇIK UÇLU YAZILI" sınavıdır. Metnin hiçbir yerinde "şıkları", "seçenekleri", "doğru seçeneği işaretleyin" gibi test sınavlarına ait kelimeleri KESİNLİKLE KULLANMA. 
 
-5. "185+ TAM PUAN TUZAĞI" ve "FORMAT REFLEKS KUTUSU" KİLİTLENMESİ:
+7. "185+ TAM PUAN TUZAĞI" ve "FORMAT REFLEKS KUTUSU" KİLİTLENMESİ:
 - ÖLÜMCÜL UYARI: "Tuzak" ve "Refleks" alanlarına KESİNLİKLE aynı cümleyi yazma, kilitlenme! "Tuzak" alanına öğrencinin düşeceği popüler hatayı, "Refleks" alanına ise bu tuzağı alt edecek doğru anahtar cümleyi yaz.
 
-6. TEKNİK ZORUNLULUK: SADECE JSON ÇIKTISI VER VE DİLİ BOZMA
+8. TEKNİK ZORUNLULUK: SADECE JSON ÇIKTISI VER VE DİLİ BOZMA
 - Türkçe karakterleri bozma. Formüllerde LaTeX backslash (\\) kullanma, düz metin yaz (Örn: "F = m x a").
 - [ÇOK KRİTİK JSON KURALI] Değerlerin (string) İÇİNDE ASLA ÇİFT TIRNAK (") KULLANMA! Vurgulamak istediğin her şey için SADECE TEK TIRNAK (') kullan. İçerikte çift tırnak kullanırsan sistem çöker!
-- [ÇOK KRİTİK] SELF-CORRECTION LOOP: Çıktıyı JSON olarak basmadan önce arka planda kendi yazdığın taslağı yukarıdaki 5 kurala göre denetle. Eğer test kelimesi, müfredat dışı bilgi veya eksik tanım varsa kendi kendini düzelt. 
+- [ÇOK KRİTİK] SELF-CORRECTION LOOP: Çıktıyı JSON olarak basmadan önce kendi içinde düşün. Özellikle özet tablonun son konuyu içerip içermediğini ve refleks kutularında bir konu kayması olup olmadığını kontrol et. Hata varsa kendini düzelt.
 - SONUÇTA SADECE GEÇERLİ JSON BAS. Öncesinde/sonrasında açıklama, markdown veya kod bloğu kullanma.
 
 JSON ŞEMASI:
