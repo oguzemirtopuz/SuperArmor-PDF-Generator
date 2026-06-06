@@ -821,7 +821,7 @@ ${special ? `═══ ÖZEL TALİMATLAR (EN YÜKSEK ÖNCELİK — üstteki her 
 
 6. TEKNİK ZORUNLULUK: SADECE JSON ÇIKTISI VER VE DİLİ BOZMA
 - Türkçe karakterleri bozma. Formüllerde LaTeX backslash (\\) kullanma, düz metin yaz (Örn: "F = m x a").
-- [ÇOK KRİTİK JSON KURALI] JSON metin değerleri (string) içinde kullanacağın tüm çift tırnak işaretlerini KESİNLİKLE escape et (Örn: \\"kelime\\"). Aksi halde sistem çöker!
+- [ÇOK KRİTİK JSON KURALI] Değerlerin (string) İÇİNDE ASLA ÇİFT TIRNAK (") KULLANMA! Vurgulamak istediğin her şey için SADECE TEK TIRNAK (') kullan. İçerikte çift tırnak kullanırsan sistem çöker!
 - [ÇOK KRİTİK] SELF-CORRECTION LOOP: Çıktıyı JSON olarak basmadan önce arka planda kendi yazdığın taslağı yukarıdaki 5 kurala göre denetle. Eğer test kelimesi, müfredat dışı bilgi veya eksik tanım varsa kendi kendini düzelt. 
 - SONUÇTA SADECE GEÇERLİ JSON BAS. Öncesinde/sonrasında açıklama, markdown veya kod bloğu kullanma.
 
