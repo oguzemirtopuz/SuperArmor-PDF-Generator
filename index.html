@@ -789,27 +789,40 @@ function buildPrompt(transcriptData) {
       ).join('\n\n')
     : null;
 
-  return `Sen bir ${ders} sınav hazırlık uzmanısın. ${sinif}. sınıf ${donem}. dönem ${yazili}. yazılısı için eksiksiz "Süper Zırhlı" sınav notu hazırla.
+  return `Sen Kıdemli bir MEB ${ders} Öğretmeni, Sınav Komisyonu Başkanı ve Uzman bir Yapay Zeka Doküman Tasarımcısısın.
+Görevin: ${sinif}. sınıf ${donem}. dönem ${yazili}. yazılısı açık uçlu ortak sınavı için "SÜPER ZIRHLI" formatında, kusursuz, akademik olarak hatasız ve nokta atışı bir "Master Çalışma Notu" oluşturmaktır.
 
 DERS: ${ders} | SINIF: ${sinif} | DÖNEM: ${donem} | YAZILI: ${yazili}
 
-${trBlock ? `═══ YOUTUBE VIDEO TRANSKRİPTLERİ (Derin analiz et — kavramları, formülleri, konuları çıkar) ═══\n${trBlock}\n` : ''}
-═══ MEB SINAV SENARYOSU (soru dağılımına KESİNLİKLE UY) ═══
+${trBlock ? `═══ YOUTUBE VİDEO TRANSKRİPTLERİ (Derin analiz et — kavramları, formülleri, konuları çıkar) ═══\n${trBlock}\n` : ''}
+═══ MEB SINAV SENARYOSU (Soru dağılımına KESİNLİKLE UY) ═══
 ${senaryo || 'Senaryo girilmedi — konuları transkriptten belirle'}
 
 ${special ? `═══ ÖZEL TALİMATLAR (EN YÜKSEK ÖNCELİK — üstteki her şeyi override eder) ═══\n${special}\n` : ''}
 
-GÖREVLER: Kavramlar+formüller → Kritik bilgiler → Senaryo uyumlu sorular+adım adım çözüm → 85+ tuzakları → Refleks stratejisi → Hızlı tekrar tablosu.
+ÇIKTI ÜRETİRKEN UYMAN GEREKEN ÖLÜMCÜL KISITLAMALAR VE AKADEMİK KURALLAR:
 
-KURALLAR:
-- BİLİMSEL DOĞRULUK: Fizik/Kimya/Biyo tanımlarında ASLA hata yapma. Örn: Kaldırma kuvveti, cismin ağırlığına değil, batan kısmının taşırdığı sıvıya bağlı yukarı yönlü kuvvettir. Yanlış kavram yanılgıları üretme.
-- MEB MÜFREDATI (%100 UYUM): Sadece lise ${sinif}. Sınıf kazanımlarına uygun, sade kavramlar ver. U=3/2nRT, genel Bernoulli denklemi gibi üniversite seviyesi formülleri KESİNLİKLE YASAKTIR. Sadece mantığını (hız artarsa basınç azalır vb.) açıkla. 
-- YENİ NESİL AÇIK UÇLU SORULAR: Sorular günlük hayattan örnekler içermeli (örn: gemi yüzmesi). Sayısal işlemlerde abartılı büyük sayılar yerine, basit sadeleştirilebilir MEB tarzı küçük rakamlar kullan.
-- SADECE JSON. JSON öncesinde/sonrasında HİÇ yazma. Formüllerde backslash (\\) kullanma, düz metin yaz.
-- Her bolum senaryo soru sayısı kadar soru içermeli.
+1. MÜFREDAT VE SEVİYE SINIRI (ÜST SEVİYE BİLGİ/FORMÜL YASAĞI):
+- ${sinif}. sınıf MEB müfredatında yer almayan, üniversite veya üst sınıf seviyesindeki formülleri (örn: Bernoulli genel denklemi, U=3/2nRT vb.), ağır matematiksel hesaplamaları ve teorik detayları KESİNLİKLE dökümana ekleme. 
+- MEB açık uçlu sınav senaryoları tamamen temel kavramsal yorum, günlük hayatla ilişkilendirme ve mantık odaklıdır. Öğrenciyi gereksiz akademik yükle boğma. Abartılı sayılar yerine sade, mantık arayan örnekler ver.
+
+2. KAVRAMSAL DOĞRULUK VE SANRI (HALLUCINATION) ENGELLEME:
+- Fizik, Kimya, Biyoloji gibi derslerdeki kritik bilgi hatalarını yapma (Örn: Kaldırma kuvveti, cismin ağırlığına değil, yer değiştiren sıvıya bağlıdır). 
+- İnternetteki veya yapay zeka modellerindeki popüler kavram yanılgılarını süzgeçten geçir. En güncel ve bilimsel olarak en doğru haliyle MEB ders kitaplarına uygun yaz.
+
+3. "185+ TAM PUAN TUZAĞI" ve "FORMAT REFLEKS KUTUSU" KİLİTLENMESİ:
+- ÖLÜMCÜL UYARI: Bu iki alana KESİNLİKLE aynı cümleyi yazma, kilitlenme!
+- "tuzak" alanına öğrencilerin sınavda en çok düşeceği popüler bir hatayı (hocanın puan kıracağı yeri) yaz.
+- "refleks" alanına bu tuzağı alt edecek doğru bilgiyi ve hocanın tam puan vereceği sihirli anahtar cümleyi yaz.
+
+4. TEKNİK ZORUNLULUK: SADECE JSON ÇIKTISI VER
+- Çıktın AŞAĞIDAKİ JSON ŞEMASINA birebir uymak ZORUNDADIR. 
+- JSON öncesinde veya sonrasında HİÇBİR AÇIKLAMA, markdown veya kod bloğu kullanma.
+- Formüllerde LaTeX backslash (\\) kullanma, düz metin yaz (Örn: "F = m x a").
 
 JSON ŞEMASI:
-{"ders":"${ders}","sinif":"${sinif}","donem":"${donem}","yazili_no":"${yazili}","bolumler":[{"kazanim_kodu":"FİZ.9.1.1","baslik":"Konu","kavramlar":[{"terim":"","tanim":""}],"formuller":[{"isim":"","formul":"","aciklama":""}],"kritik_bilgiler":[""],"sorular":[{"soru_no":1,"soru":"","cozum_adimlari":[""]}],"tuzak":"85+ Tuzak: ...","refleks":"Hoca bunu nasıl sorar: ... | Refleks: ..."}],"hizli_tekrar":[{"kavram":"","formul_veya_kural":"","kritik_not":""}],"son_dakika":[""]}`;
+{"ders":"${ders}","sinif":"${sinif}","donem":"${donem}","yazili_no":"${yazili}","bolumler":[{"kazanim_kodu":"KOD.9.1.1","baslik":"Konu Adı","kavramlar":[{"terim":"Terim","tanim":"Açıklama"}],"formuller":[{"isim":"Kural/Formül","formul":"...","aciklama":"..."}],"kritik_bilgiler":[""],"sorular":[{"soru_no":1,"soru":"Günlük hayattan senaryolu açık uçlu soru...","cozum_adimlari":["Adım 1...","Adım 2..."]}],"tuzak":"85+ Tuzak: ...","refleks":"Hoca bunu nasıl sorar: ... | Refleks: ..."}],"hizli_tekrar":[{"kavram":"...","formul_veya_kural":"...","kritik_not":"..."}],"son_dakika":[""]}
+`;
 }
 
 /* ═══════════════════════════════════════════════════
