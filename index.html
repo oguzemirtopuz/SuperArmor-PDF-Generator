@@ -828,6 +828,42 @@ function buildChips() {
 }
 
 /* ═══════════════════════════════════════════════════
+   ROBUST JSON PARSER
+═══════════════════════════════════════════════════ */
+function robustJsonParse(raw) {
+  const jsonStr = raw.match(/\{[\s\S]*\}/)?.[0];
+  if (!jsonStr) throw new Error('JSON bloğu bulunamadı');
+
+  // Attempt 1: direct
+  try { return JSON.parse(jsonStr); } catch {}
+
+  // Attempt 2: fix lone backslashes (LaTeX \rho, \cdot etc.)
+  try {
+    const a2 = jsonStr.replace(/\\(?!["\\/bfnrtu0-9])/g, '\\\\');
+    return JSON.parse(a2);
+  } catch {}
+
+  // Attempt 3: strip control chars + fix backslashes
+  try {
+    const a3 = jsonStr
+      .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, ' ')
+      .replace(/\\(?!["\\/bfnrtu0-9])/g, '\\\\');
+    return JSON.parse(a3);
+  } catch {}
+
+  // Attempt 4: aggressive — replace all backslashes in string values
+  try {
+    const a4 = jsonStr.replace(/"((?:[^"\\]|\\[\s\S])*)"/g, (_, inner) => {
+      const safe = inner.replace(/\\(?!["\\/bfnrtu0-9])/g, '\\\\');
+      return `"${safe}"`;
+    });
+    return JSON.parse(a4);
+  } catch (e) {
+    throw new Error(e.message);
+  }
+}
+
+/* ═══════════════════════════════════════════════════
    LOG & PROGRESS
 ═══════════════════════════════════════════════════ */
 function addLog(msg, type='inf') {
@@ -928,9 +964,7 @@ async function generate() {
     // ── Phase 3: Parse JSON ──
     let data;
     try {
-      const m = raw.match(/\{[\s\S]*\}/);
-      if (!m) throw new Error('JSON bloğu bulunamadı');
-      data = JSON.parse(m[0]);
+      data = robustJsonParse(raw);
     } catch (e) {
       throw new Error(`JSON parse hatası: ${e.message}\n\nYanıt başlangıcı:\n${raw.substring(0, 400)}`);
     }
