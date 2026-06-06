@@ -99,10 +99,13 @@ textarea#special:focus{border-color:rgba(240,165,0,.6);box-shadow:0 0 0 3px rgba
 .url-top input:focus{border:none;box-shadow:none;outline:none}
 .url-st{font-size:.73rem;padding:.2rem 0 0;display:flex;align-items:center;gap:.4rem;min-height:16px;color:var(--text3)}
 .url-st.ok{color:var(--success)}.url-st.err{color:var(--red)}.url-st.loading{color:var(--gold)}
-/* Per-video manual fallback */
-.url-fallback{margin-top:.5rem;display:none}
-.url-fallback textarea{font-size:.78rem;min-height:60px;border-color:rgba(233,69,96,.3)}
-.url-row.err .url-fallback{display:block}
+/* Per-video manual fallback — always visible */
+.url-fallback{margin-top:.6rem}
+.url-fallback textarea{font-size:.78rem;min-height:55px;border-color:rgba(100,120,160,.3);color:var(--text2)}
+.url-fallback textarea:focus{border-color:rgba(233,69,96,.5);color:var(--text)}
+.url-fallback-lbl{font-size:.7rem;color:var(--text3);margin-bottom:.25rem;display:flex;align-items:center;gap:.4rem}
+.url-fallback-lbl a{color:var(--text3);text-decoration:underline dotted}
+.url-fallback-lbl a:hover{color:var(--gold)}
 .url-rm{width:30px;height:30px;border-radius:7px;border:1px solid var(--border);background:transparent;color:var(--text3);cursor:pointer;font-size:.85rem;display:flex;align-items:center;justify-content:center;transition:var(--tr);flex-shrink:0}
 .url-rm:hover{border-color:var(--red);color:var(--red)}
 
@@ -468,9 +471,14 @@ function addUrl() {
       <button class="url-rm" onclick="rmUrl(${idx})" type="button">✕</button>
     </div>
     <div class="url-st" id="ust${idx}"></div>
-    <div class="url-fallback" id="ufall${idx}">
-      <label class="lbl" style="color:var(--red);margin-top:.3rem">Transkript çekilemedi — Manuel yapıştır:</label>
-      <textarea id="uman${idx}" rows="3" placeholder="Video transkriptini buraya yapıştır..."></textarea>
+    <div class="url-fallback">
+      <div class="url-fallback-lbl">
+        📋 Manuel transkript (isteğe bağlı) —
+        YouTube’da video sayfasını aç → altındaki <b style="color:var(--text2)">⋯</b> menüden
+        <a href="https://support.google.com/youtube/answer/100078" target="_blank">"Show transcript"</a>
+        seç → kopyala → aşağıya yapıştır
+      </div>
+      <textarea id="uman${idx}" rows="3" placeholder="Video transkriptini buraya yapıştır... (isteğe bağlı — boş bırakırsan sistem sadece senaryo ile çalışır)"></textarea>
     </div>`;
   list.appendChild(row);
 }
@@ -890,16 +898,20 @@ async function generate() {
           transcriptData.push(r.value);
         } else {
           const row = urlRows[i];
-          setUrlSt(row.idx, 'err', `✗ ${r.reason?.message || 'Bilinmeyen hata'} — Aşağıya manuel yapıştırabilirsiniz`);
+          setUrlSt(row.idx, 'err', `✗ ${r.reason?.message || 'Bilinmeyen hata'}`);
           addLog(`✗ Video ${i + 1} başarısız: ${r.reason?.message}`, 'err');
         }
       });
 
-      // If ALL failed and no manual fallback
       if (transcriptData.length === 0) {
-        const hasManual = urlRows.some(r => r.manual?.length > 20);
+        // Check if any manual text was provided
+        const hasManual = urlRows.some(r => (document.getElementById(`uman${r.idx}`)?.value.trim().length || 0) > 20);
         if (!hasManual) {
-          throw new Error('Hiçbir videodan transkript çekilemedi. Her başarısız video altındaki alana transkripti manuel yapıştırın, veya videoları kaldırıp sadece senaryo ile devam edin.');
+          // Auto go back to step 2 so user can see the manual paste areas
+          addLog('⇦ Adım 2\'e dönüşüyor — video altındaki kutulara transkript yapıştırın...', 'err');
+          genBtn.disabled = false;
+          setTimeout(() => go(2), 1200);
+          throw new Error('Transkript çekilemedi. Adım 2\'e yönlendiriliyor — her video kutusunun altına YouTube\'dan aldığınız transkripti yapıştırın veya videoları kaldırıp sadece senaryo ile devam edin.');
         }
       }
     }
