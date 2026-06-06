@@ -686,35 +686,31 @@ function parseTranscriptXml(xml) {
 
 // Strategy 2 — Watch page scraping
 async function tryWatchPage(videoId) {
+  addLog('  → Strateji 2: YouTube sayfa içeriği inceleniyor...');
   try {
-    addLog('  → Strateji 2: YouTube sayfa içeriği inceleniyor...');
-    const html = await proxyFetch(`https://www.youtube.com/watch?v=${videoId}`, 12000);
+    // Hard 12s cap on this whole strategy
+    const html = await Promise.race([
+      proxyFetch(`https://www.youtube.com/watch?v=${videoId}`, 10000),
+      new Promise((_,r) => setTimeout(() => r(new Error('timeout')), 12000)),
+    ]);
     if (!html || html.length < 1000) return null;
-
     const patterns = [
       /"captionTracks":(\[.*?\])/,
       /"captionTracks":\s*(\[[\s\S]{5,4000}?\]),\s*"audioTracks"/,
       /"captionTracks":\s*(\[[\s\S]{5,4000}?\]),\s*"translationLanguages"/,
-      /"captionTracks":\s*(\[[\s\S]{5,4000}?\]),\s*"defaultAudioTrackIndex"/,
     ];
-
     let tracks = null;
     for (const pat of patterns) {
       const m = html.match(pat);
-      if (m) {
-        try { const t = JSON.parse(m[1]); if (t?.length > 0) { tracks = t; break; } } catch {}
-      }
+      if (m) { try { const t = JSON.parse(m[1]); if (t?.length > 0) { tracks = t; break; } } catch {} }
     }
     if (!tracks?.length) return null;
-
     const track = tracks.find(t => t.languageCode === 'tr')
                || tracks.find(t => t.languageCode?.startsWith('tr'))
                || tracks.find(t => t.languageCode === 'en')
                || tracks[0];
-
     if (!track?.baseUrl) return null;
-
-    const xml = await proxyFetch(decodeURIComponent(track.baseUrl), 10000);
+    const xml = await proxyFetch(decodeURIComponent(track.baseUrl), 8000);
     const result = parseTranscriptXml(xml);
     if (result) addLog('  → Strateji 2 (watch page) başarılı', 'ok');
     return result;
@@ -729,9 +725,9 @@ async function tryInvidious(videoId) {
     'https://invidious.privacyredirect.com',
     'https://yt.artemislena.eu',
   ];
-  // Try instances in parallel
+  // All instances in PARALLEL — first success wins, 10s hard cap
   const attempts = instances.map(async base => {
-    const capRaw = await proxyFetch(`${base}/api/v1/captions/${videoId}`, 8000);
+    const capRaw = await proxyFetch(`${base}/api/v1/captions/${videoId}`, 7000);
     const { captions } = JSON.parse(capRaw);
     if (!captions?.length) throw new Error('no captions');
     const track = captions.find(c => c.language_code === 'tr')
@@ -739,15 +735,17 @@ async function tryInvidious(videoId) {
                || captions.find(c => c.language_code === 'en')
                || captions[0];
     if (!track?.url) throw new Error('no url');
-    const content = await proxyFetch(`${base}${track.url}`, 8000);
-    const parsed  = parseTranscriptRaw(content, content.includes('WEBVTT') ? 'vtt' : 'srv1');
+    const content = await proxyFetch(`${base}${track.url}`, 7000);
+    const parsed = parseTranscriptRaw(content, content.includes('WEBVTT') ? 'vtt' : 'srv1');
     if (!parsed || parsed.length < 30) throw new Error('too short');
     return parsed;
   });
-  const results = await Promise.allSettled(attempts);
-  const ok = results.find(r => r.status === 'fulfilled');
-  if (ok) { addLog('  → Strateji 3 (Invidious) başarılı', 'ok'); return ok.value; }
-  return null;
+  const result = await Promise.race([
+    Promise.any(attempts).catch(() => null),
+    new Promise(r => setTimeout(() => r(null), 10000)),
+  ]);
+  if (result) addLog('  → Strateji 3 (Invidious) başarılı', 'ok');
+  return result;
 }
 
 /* ═══════════════════════════════════════════════════
