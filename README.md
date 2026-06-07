@@ -1,7 +1,7 @@
 <div align="center">
   <img src="https://img.shields.io/badge/Status-Active-success?style=for-the-badge" alt="Status">
   <img src="https://img.shields.io/badge/Architecture-Serverless-blue?style=for-the-badge" alt="Architecture">
-  <img src="https://img.shields.io/badge/AI-Claude%20%7C%20Gemini-8E75C2?style=for-the-badge" alt="AI Engine">
+  <img src="https://img.shields.io/badge/AI-Groq%20%7C%20Llama%203.3-orange?style=for-the-badge" alt="AI Engine">
   <br>
   <h1>🛡️ SuperArmor PDF Generator</h1>
   <p><b>An Autonomous, AI-Driven Exam Preparation Ecosystem for Elite Students</b></p>
@@ -13,7 +13,7 @@
 
 The modern education system demands hyper-specific preparation, yet students are left manually cross-referencing generic textbook materials against strict, predefined exam scenarios (like MEB Senaryoları). This manual process is inefficient, prone to human error, and fails to identify the critical "trap zones" where marks are typically lost.
 
-**SuperArmor PDF Generator** is a serverless, zero-latency front-end application designed to completely automate and optimize this preparation process. Built entirely on client-side technologies and utilizing advanced AI APIs, it takes unstructured data (YouTube video transcripts, raw exam scenario matrices via OCR) and engineers a flawless, highly structured, and pedagogically sound "Super Armor" PDF study guide. 
+**SuperArmor PDF Generator** is a serverless, zero-latency front-end application designed to completely automate and optimize this preparation process. Built entirely on client-side technologies and utilizing advanced AI APIs, it takes unstructured data (YouTube video transcripts, raw exam scenario matrices via Groq Vision OCR) and engineers a flawless, highly structured, and pedagogically sound "Super Armor" PDF study guide. 
 
 No servers, no databases, no latency. Just pure architectural efficiency converting raw knowledge into an elite, localized study asset.
 
@@ -30,20 +30,19 @@ Because this ecosystem is strictly serverless and operates entirely within the c
     ```
 2.  **Launch the System:**
     Simply double-click the `index.html` file to open it in any modern web browser (Chrome, Edge, Brave, Firefox).
-3.  **Configure Cognitive Engine & API Keys:**
-    On Step 1 of the application, input either an Anthropic Claude API Key or a Google Gemini API Key. 
-    *   **Get a Claude API Key:** [Anthropic Console](https://console.anthropic.com/settings/keys)
-    *   **Get a Gemini API Key:** [Google AI Studio](https://aistudio.google.com/app/apikey)
+3.  **Configure Cognitive Engine & API Key:**
+    On Step 1 of the application, input a Groq API Key. 
+    *   **Get a Groq API Key:** [Groq Console](https://console.groq.com/keys)
     
-    *(Note: Keys are securely stored in your browser's local storage `localStorage` and never transmitted anywhere except directly to the AI provider).*
+    *(Note: Keys are securely stored in your browser's local storage `localStorage` and never transmitted anywhere except directly to Groq).*
 
 ---
 
 ## 🛠️ Technological Architecture
 
 *   **Core Logic:** Vanilla HTML, CSS3, and ES6 JavaScript.
-*   **Cognitive Engines:** Anthropic Claude (`claude-sonnet-4-20250514`) & Google Gemini (`gemini-2.0-flash`) via an abstracted AI provider layer.
-*   **Computer Vision (OCR):** Tesseract.js (Frontend implementation, no backend needed).
+*   **Cognitive Engines:** Groq API (Primary: `llama-3.3-70b-versatile` with multiple fallback models like `llama3-70b-8192` to handle limits).
+*   **Computer Vision (OCR):** Groq Vision API (`meta-llama/llama-4-scout-17b-16e-instruct` or similar Llama Vision models) for high-accuracy exam scenario parsing.
 *   **Document Generation:** jsPDF & jsPDF-AutoTable for dynamic, styled client-side PDF generation.
 *   **Security Paradigm:** Ephemeral API key storage via `localStorage`—keys never leave the user's browser.
 
@@ -63,12 +62,12 @@ The generated PDFs adhere to a strictly optimized pedagogical structure:
 
 ## ⚙️ Operational Workflow
 
-1.  **Configure Cognitive Engine:** Select between Claude or Gemini and input your API key securely.
+1.  **Configure Cognitive Engine:** Input your Groq API key securely.
 2.  **Ingest Raw Data:** 
-    *   Upload the MEB exam scenario image (processed instantly via Tesseract.js).
+    *   Upload the MEB exam scenario image (processed instantly via Groq Vision API).
     *   Paste NotebookLM video transcription summaries.
 3.  **Data Validation:** Verify and edit the parsed OCR table (Topic, Code, Question Count).
-4.  **Generate & Deploy:** Trigger the AI pipeline. The system constructs the prompt, parses the structured JSON response, and dynamically renders the stylized PDF for immediate download.
+4.  **Generate & Deploy:** Trigger the AI pipeline. The system constructs the prompt, parses the structured JSON response from Groq, and dynamically renders the stylized PDF for immediate download.
 
 ---
 
